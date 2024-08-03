@@ -72,7 +72,9 @@
                     <a href="./slip-printing.php">
                         <button class="btn btn-outline-secondary me-2">Print Slip</button>
                     </a>
-                    <button class="btn btn-outline-success me-2">Donation</button>
+                    <a href="./donate.php">
+                        <button class="btn btn-outline-success me-2">Donation</button>
+                    </a>
                     <a href="#" class="btn btn-outline-secondary me-2" aria-label="Facebook">
                         <i class="fab fa-facebook-f"></i>
                     </a>

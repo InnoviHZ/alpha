@@ -134,7 +134,9 @@
                     <a href="./slip-printing.php">
                         <button class="btn btn-outline-secondary me-2">Print Slip</button>
                     </a>
-                    <button class="btn btn-outline-success me-2">Donation</button>
+                    <a href="./donate.php">
+                        <button class="btn btn-outline-success me-2">Donation</button>
+                    </a>
                     <a href="#" class="btn btn-outline-secondary me-2" aria-label="Facebook">
                         <i class="fab fa-facebook-f"></i>
                     </a>
@@ -211,9 +213,10 @@
 
 
     <!-- Footer -->
-    <footer class="py-5">
+    <footer class="">
         <div class="container">
             <div class="row">
+                <!-- Social Links and Address -->
                 <div class="col-md-3 mb-4">
                     <h5>Contact Us</h5>
                     <p class="mb-2">123 Charity Lane, Careville, CA 90210</p>
@@ -237,6 +240,8 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- External Links -->
                 <div class="col-md-3 mb-4">
                     <h5>Useful Links</h5>
                     <ul class="list-unstyled">
@@ -245,6 +250,8 @@
                         <li><a href="#" class="text-dark">Volunteer Opportunities</a></li>
                     </ul>
                 </div>
+
+                <!-- Sitemap -->
                 <div class="col-md-3 mb-4">
                     <h5>Sitemap</h5>
                     <ul class="list-unstyled">
@@ -254,6 +261,8 @@
                         <li><a href="#contact" class="text-dark">Contact</a></li>
                     </ul>
                 </div>
+
+                <!-- Google Map -->
                 <div class="col-md-3 mb-4">
                     <h5>Find Us</h5>
                     <div id="map" style="width: 100%; height: 200px;">
@@ -262,9 +271,28 @@
                 </div>
             </div>
         </div>
+        <div class="wv">
+            <div class="z-n1">
+                <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+                    <defs>
+                        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+                    </defs>
+                    <g class="parallax">
+                        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(69,148,77,0.7" />
+                        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(69,148,77,0.5)" />
+                        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(69,148,77,0.3)" />
+                        <use xlink:href="#gentle-wave" x="48" y="7" fill="#45944d" />
+                    </g>
+                </svg>
+            </div>
+            <!--Waves end-->
+            <div class="content flex">
+                <!-- <p>By.Goodkatz | Free to use </p> -->
+            </div>
+        </div>
     </footer>
 
-    <!-- Privacy Policy -->
+    <!-- Privacy Policy (same as before) -->
     <div class="bg-light py-3 border-top border-5 border-success">
         <div class="container">
             <div class="row">
