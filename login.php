@@ -72,6 +72,11 @@
             padding: 0.5rem 1rem;
         }
 
+        .social-btn:hover {
+            background-color: gray;
+            color: white;
+        }
+
         .bg-login-image {
             background-position: center;
             background-size: cover;
@@ -160,9 +165,11 @@
                                         </div>
                                         <form class="user">
                                             <div class="form-group mb-3">
+                                                <label for="exampleInputPassword" class="form-">Email Address</label>
                                                 <input type="email" class="form-control form-control-user" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter Email Address...">
                                             </div>
                                             <div class="form-group mb-3">
+                                                <label for="exampleInputPassword" class="form-label">Password</label>
                                                 <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
                                             </div>
                                             <div class="form-group mb-3">
@@ -171,7 +178,7 @@
                                                     <label class="custom-control-label" for="customCheck">Remember Me</label>
                                                 </div>
                                             </div>
-                                            <button type="submit" class="btn btn-primary btn-user btn-block mb-3">
+                                            <button type="submit" class="btn btn-primary btn-user btn-block mb-3 w-100">
                                                 Login
                                             </button>
                                             <hr>
