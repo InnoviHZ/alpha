@@ -27,7 +27,9 @@
                 background-position: 0% 50%;
             }
         }
-
+        .new{
+            
+        }
         .body {
             /* background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
             background-color: var(--white);
