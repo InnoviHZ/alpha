@@ -27,7 +27,9 @@
                 background-position: 0% 50%;
             }
         }
-
+        .new{
+            
+        }
         .body {
             /* background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
             background-color: var(--white);
@@ -73,13 +75,11 @@
             background-image: url(./assets/images/login/login.jpg);
             overflow: hidden;
         }
-
-        .inp {
-            height: 100%;
+        .inp{
+           height: 100%;
         }
-
-        .bt {
-            height: 100%;
+        .bt{
+           height: 100%;
         }
     </style>
 </head>
@@ -241,25 +241,6 @@
                         <!-- Google Map will be inserted here -->
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="wv">
-            <div class="z-n1">
-                <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
-                    <defs>
-                        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-                    </defs>
-                    <g class="parallax">
-                        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(69,148,77,0.7" />
-                        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(69,148,77,0.5)" />
-                        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(69,148,77,0.3)" />
-                        <use xlink:href="#gentle-wave" x="48" y="7" fill="#45944d" />
-                    </g>
-                </svg>
-            </div>
-            <!--Waves end-->
-            <div class="content flex">
-                <!-- <p>By.Goodkatz | Free to use </p> -->
             </div>
         </div>
     </footer>
