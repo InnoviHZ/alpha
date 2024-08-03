@@ -178,7 +178,7 @@
                                                     <label class="custom-control-label" for="customCheck">Remember Me</label>
                                                 </div>
                                             </div>
-                                            <button type="submit" class="btn btn-primary btn-user btn-block mb-3 w-100">
+                                            <button type="submit" class="btn btn-success btn-user btn-block mb-3 w-100">
                                                 Login
                                             </button>
                                             <hr>
