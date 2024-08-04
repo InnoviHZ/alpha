@@ -1,3 +1,9 @@
+<?php
+include "./assets/include/config.php";
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
