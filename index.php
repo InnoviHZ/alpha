@@ -67,7 +67,7 @@
                 </ul>
                 <div class="d-flex align-items-center">
                     <a href="./login.php">
-                        <button class="btn btn-outline-primary me-2">Sign In</button>
+                        <button class="btn btn-outline-primary me-2">Login</button>
                     </a>
                     <a href="./slip-printing.php">
                         <button class="btn btn-outline-secondary me-2">Print Slip</button>
