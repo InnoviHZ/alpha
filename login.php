@@ -1,3 +1,27 @@
+<?php
+session_start();
+include "./assets/include/config.php";
+
+if (isset($_POST['submit'])) {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    // select from db
+    $select = "SELECT * FROM `_PDUsers` WHERE email = '$email'";
+    $query = mysqli_query($conn, $select);
+    $num_row = mysqli_num_rows($query);
+    if ($num_row == 0) {
+        echo "<script>alert('email Not found')</script>";
+    } else {
+        $row = mysqli_fetch_assoc($query);
+        if ($row['password'] == $password) {
+            header("LOCATION:index.php");
+        } else {
+            echo "<script>alert('password is wrong')</script>";
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -134,7 +158,9 @@
                     <a href="./slip-printing.php">
                         <button class="btn btn-outline-secondary me-2">Print Slip</button>
                     </a>
-                    <button class="btn btn-outline-success me-2">Donation</button>
+                    <a href="./donate.php">
+                        <button class="btn btn-outline-success me-2">Donation</button>
+                    </a>
                     <a href="#" class="btn btn-outline-secondary me-2" aria-label="Facebook">
                         <i class="fab fa-facebook-f"></i>
                     </a>
@@ -163,24 +189,25 @@
                                         <div class="text-center">
                                             <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                         </div>
-                                        <form class="user">
+                                        <form class="user" method="POST" action="">
                                             <div class="form-group mb-3">
-                                                <label for="exampleInputPassword" class="form-">Email Address</label>
-                                                <input type="email" class="form-control form-control-user" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter Email Address...">
+                                                <label for="exampleInputEmail" class="form-label">Email Address</label>
+                                                <input type="email" class="form-control form-control-user" id="exampleInputEmail" name="email" aria-describedby="emailHelp" placeholder="Enter Email Address..." required>
                                             </div>
                                             <div class="form-group mb-3">
                                                 <label for="exampleInputPassword" class="form-label">Password</label>
-                                                <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
+                                                <input type="password" class="form-control form-control-user" id="exampleInputPassword" name="password" placeholder="Password" required>
                                             </div>
                                             <div class="form-group mb-3">
                                                 <div class="custom-control custom-checkbox small">
-                                                    <input type="checkbox" class="custom-control-input" id="customCheck">
+                                                    <input type="checkbox" class="custom-control-input" id="customCheck" name="remember">
                                                     <label class="custom-control-label" for="customCheck">Remember Me</label>
                                                 </div>
                                             </div>
-                                            <button type="submit" class="btn btn-success btn-user btn-block mb-3 w-100">
+                                            <input type="submit" class="btn btn-success btn-user btn-block mb-3 w-100" name="submit" value="Login">
+                                            <!-- <button type="submit"  >
                                                 Login
-                                            </button>
+                                            </button> -->
                                             <hr>
                                             <div class="text-center mb-3">
                                                 <p>Or sign in with:</p>
@@ -211,9 +238,10 @@
 
 
     <!-- Footer -->
-    <footer class="py-5">
+    <footer class="">
         <div class="container">
             <div class="row">
+                <!-- Social Links and Address -->
                 <div class="col-md-3 mb-4">
                     <h5>Contact Us</h5>
                     <p class="mb-2">123 Charity Lane, Careville, CA 90210</p>
@@ -237,6 +265,8 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- External Links -->
                 <div class="col-md-3 mb-4">
                     <h5>Useful Links</h5>
                     <ul class="list-unstyled">
@@ -245,6 +275,8 @@
                         <li><a href="#" class="text-dark">Volunteer Opportunities</a></li>
                     </ul>
                 </div>
+
+                <!-- Sitemap -->
                 <div class="col-md-3 mb-4">
                     <h5>Sitemap</h5>
                     <ul class="list-unstyled">
@@ -254,6 +286,8 @@
                         <li><a href="#contact" class="text-dark">Contact</a></li>
                     </ul>
                 </div>
+
+                <!-- Google Map -->
                 <div class="col-md-3 mb-4">
                     <h5>Find Us</h5>
                     <div id="map" style="width: 100%; height: 200px;">
@@ -262,9 +296,28 @@
                 </div>
             </div>
         </div>
+        <div class="wv">
+            <div class="z-n1">
+                <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+                    <defs>
+                        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+                    </defs>
+                    <g class="parallax">
+                        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(69,148,77,0.7" />
+                        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(69,148,77,0.5)" />
+                        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(69,148,77,0.3)" />
+                        <use xlink:href="#gentle-wave" x="48" y="7" fill="#45944d" />
+                    </g>
+                </svg>
+            </div>
+            <!--Waves end-->
+            <div class="content flex">
+                <!-- <p>By.Goodkatz | Free to use </p> -->
+            </div>
+        </div>
     </footer>
 
-    <!-- Privacy Policy -->
+    <!-- Privacy Policy (same as before) -->
     <div class="bg-light py-3 border-top border-5 border-success">
         <div class="container">
             <div class="row">

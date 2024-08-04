@@ -27,9 +27,7 @@
                 background-position: 0% 50%;
             }
         }
-        .new{
-            
-        }
+
         .body {
             /* background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
             background-color: var(--white);
@@ -75,11 +73,24 @@
             background-image: url(./assets/images/login/login.jpg);
             overflow: hidden;
         }
-        .inp{
-           height: 100%;
+
+        .inp {
+            height: 100%;
         }
-        .bt{
-           height: 100%;
+
+        .bt {
+            height: 100%;
+        }
+
+        .form-container {
+            background-color: white;
+            padding-top: 20px;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 100px auto;
+            /* This centers the form and adds top margin */
+            margin-top: 17%;
         }
     </style>
 </head>
@@ -132,7 +143,9 @@
                         <button class="btn btn-outline-primary me-2">Sign In</button>
                     </a>
                     <!-- <button class="btn btn-outline-secondary me-2">Print Slip</button> -->
-                    <button class="btn btn-outline-success me-2">Donation</button>
+                    <a href="./donate.php">
+                        <button class="btn btn-outline-success me-2">Donation</button>
+                    </a>
                     <a href="#" class="btn btn-outline-secondary me-2" aria-label="Facebook">
                         <i class="fab fa-facebook-f"></i>
                     </a>
@@ -146,55 +159,38 @@
             </div>
         </div>
     </nav>
-    <!-- main Section -->
-    <div class="container-fluid body">
-        <div class="container">
-            <div class="row justify-content-center align-items-center min-vh-100">
-                <div class="col-xl-10 col-lg-12 col-md-9">
-                    <div class="card o-hidden shadow-lg my-5">
-                        <div class="card-body p-0">
-                            <div class="row">
-                                <!-- <div class="col-lg-6 d-none d-lg-block bg-login-image">
-                                </div> -->
-                                <div class="col-lg-12 p-5">
-                                    <div class="p-1">
-                                        <div class="text-center">
-                                            <h1 class="h4 text-gray-900 mb-4">Print Beneficiary Slip</h1>
-                                        </div>
-                                        <form class="user">
-                                            <div class="form-group row p-2 bg-light border-5">
-                                                <div class="col-md-9">
-                                                    <input type="text" class="form-control border-0 inp" placeholder="Enter Mobile Number...">
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <button type="submit" class="btn bt btn-primary col-md-3 w-100">
-                                                        Print
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="text-center mb-3">
-                                                <p>Or</p>
-                                                <a href="#" class="btn btn-google btn-user social-btn me-2">
-                                                    <i class="fa-solid fa-download"></i> Download
-                                                </a>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg">
+                    <div class="card-body p-5">
+                        <h2 class="text-center mb-4">Print Orphan Care Slip</h2>
+                        <form>
+                            <div class="mb-4">
+                                <label for="orphanId" class="form-label">Orphan ID or Guardian's Phone Number</label>
+                                <input type="text" id="orphanId" class="form-control form-control-lg" placeholder="Enter ID or Phone Number">
                             </div>
-                        </div>
+                            <p class="text-muted mb-4">Please allow popups for this site from your browser</p>
+                            <div class="d-grid gap-2">
+                                <button id="printBtn" class="btn btn-primary btn-lg" disabled>
+                                    <i class="fas fa-print me-2"></i> Print Orphan Care Slip
+                                </button>
+                                <button id="downloadBtn" class="btn btn-success btn-lg" disabled>
+                                    <i class="fas fa-download me-2"></i> Download Slip
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-
     <!-- Footer -->
-    <footer class="py-5">
+    <footer class="">
         <div class="container">
             <div class="row">
+                <!-- Social Links and Address -->
                 <div class="col-md-3 mb-4">
                     <h5>Contact Us</h5>
                     <p class="mb-2">123 Charity Lane, Careville, CA 90210</p>
@@ -218,6 +214,8 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- External Links -->
                 <div class="col-md-3 mb-4">
                     <h5>Useful Links</h5>
                     <ul class="list-unstyled">
@@ -226,6 +224,8 @@
                         <li><a href="#" class="text-dark">Volunteer Opportunities</a></li>
                     </ul>
                 </div>
+
+                <!-- Sitemap -->
                 <div class="col-md-3 mb-4">
                     <h5>Sitemap</h5>
                     <ul class="list-unstyled">
@@ -235,6 +235,8 @@
                         <li><a href="#contact" class="text-dark">Contact</a></li>
                     </ul>
                 </div>
+
+                <!-- Google Map -->
                 <div class="col-md-3 mb-4">
                     <h5>Find Us</h5>
                     <div id="map" style="width: 100%; height: 200px;">
@@ -243,9 +245,28 @@
                 </div>
             </div>
         </div>
+        <div class="wv">
+            <div class="z-n1">
+                <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+                    <defs>
+                        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+                    </defs>
+                    <g class="parallax">
+                        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(69,148,77,0.7" />
+                        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(69,148,77,0.5)" />
+                        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(69,148,77,0.3)" />
+                        <use xlink:href="#gentle-wave" x="48" y="7" fill="#45944d" />
+                    </g>
+                </svg>
+            </div>
+            <!--Waves end-->
+            <div class="content flex">
+                <!-- <p>By.Goodkatz | Free to use </p> -->
+            </div>
+        </div>
     </footer>
 
-    <!-- Privacy Policy -->
+    <!-- Privacy Policy (same as before) -->
     <div class="bg-light py-3 border-top border-5 border-success">
         <div class="container">
             <div class="row">
@@ -258,6 +279,7 @@
     </div>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
         function initMap() {
             var location = {
@@ -274,7 +296,69 @@
             });
         }
     </script>
+    <script>
+        const orphanIdInput = document.getElementById('orphanId');
+        const printBtn = document.getElementById('printBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
 
+        // ... rest of your JavaScript remains the same
+        orphanIdInput.addEventListener('input', function() {
+            const isInputFilled = this.value.trim() !== '';
+            printBtn.disabled = !isInputFilled;
+            downloadBtn.disabled = !isInputFilled;
+        });
+
+        printBtn.addEventListener('click', function() {
+            const orphanId = orphanIdInput.value;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Orphan Care Slip</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; }
+                            .slip { border: 1px solid #000; padding: 20px; max-width: 500px; margin: 20px auto; }
+                            h1 { text-align: center; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="slip">
+                            <h1>Orphan Care Slip</h1>
+                            <p><strong>Orphan ID / Guardian's Phone:</strong> ${orphanId}</p>
+                            <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                            <p>This slip confirms the registration of the orphan with the provided ID/Phone number in our care program.</p>
+                        </div>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        });
+
+        downloadBtn.addEventListener('click', function() {
+            const orphanId = orphanIdInput.value;
+            const {
+                jsPDF
+            } = window.jspdf;
+
+            const doc = new jsPDF();
+
+            // Add content to the PDF
+            doc.setFontSize(22);
+            doc.text('Orphan Care Slip', 105, 20, null, null, 'center');
+
+            doc.setFontSize(12);
+            doc.text(`Orphan ID / Guardian's Phone: ${orphanId}`, 20, 40);
+            doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 50);
+
+            doc.setFontSize(10);
+            doc.text('This slip confirms the registration of the orphan with the', 20, 70);
+            doc.text('provided ID/Phone number in our care program.', 20, 80);
+
+            // Save the PDF
+            doc.save('OrphanCareSlip.pdf');
+        });
+    </script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
