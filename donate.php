@@ -20,9 +20,6 @@
             margin-bottom: 10vh;
             padding: 0;
         }
-        .nes{
-            
-        }
         .card {
             border: none;
             border-radius: 1rem;
