@@ -1,71 +1,111 @@
 <?php
 session_start();
-require_once "./assets/include/config.php";
 
-$email = $password = '';
-$email_err = $password_err = $login_err = '';
+// Config class to handle database connection
+class Config {
+    private static $instance = null;
+    private $conn;
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Validate email
-    if (empty(trim($_POST["email"]))) {
-        $email_err = "Please enter your email.";
-    } else {
-        $email = trim($_POST["email"]);
-    }
-
-    // Validate password
-    if (empty(trim($_POST["password"]))) {
-        $password_err = "Please enter your password.";
-    } else {
-        $password = trim($_POST["password"]);
-    }
-
-    // Check input errors before querying the database
-    if (empty($email_err) && empty($password_err)) {
-        $sql = "SELECT id, email, password FROM `_PDUsers` WHERE email = ?";
-
-        if ($stmt = mysqli_prepare($conn, $sql)) {
-            mysqli_stmt_bind_param($stmt, "s", $param_email);
-            $param_email = $email;
-
-            if (mysqli_stmt_execute($stmt)) {
-                mysqli_stmt_store_result($stmt);
-
-                if (mysqli_stmt_num_rows($stmt) == 1) {
-                    mysqli_stmt_bind_result($stmt, $id, $db_email, $db_password);
-                    if (mysqli_stmt_fetch($stmt)) {
-                        if ($password === $db_password) {
-                            // Password is correct, start a new session
-                            session_start();
-
-                            // Store data in session variables
-                            $_SESSION["loggedin"] = true;
-                            $_SESSION["id"] = $id;
-                            $_SESSION["email"] = $db_email;
-
-                            // Redirect user to welcome page
-                            header("location: index.php");
-                            exit;
-                        } else {
-                            // Password is not valid
-                            $login_err = "Invalid email or password.";
-                        }
-                    }
-                } else {
-                    // Email doesn't exist
-                    $login_err = "Invalid email or password.";
-                }
-            } else {
-                $login_err = "Oops! Something went wrong. Please try again later.";
-            }
-
-            mysqli_stmt_close($stmt);
+    private function __construct() {
+        // Replace with your actual database credentials
+        $this->conn = new mysqli("localhost", "root", "", "alpha");
+        if ($this->conn->connect_error) {
+            die("Connection failed: " . $this->conn->connect_error);
         }
     }
 
-    mysqli_close($conn);
+    public static function getInstance() {
+        if (self::$instance == null) {
+            self::$instance = new Config();
+        }
+        return self::$instance;
+    }
+
+    public function getConnection() {
+        return $this->conn;
+    }
 }
+
+// User class to handle user-related operations
+class User {
+    private $db;
+
+    public function __construct() {
+        $this->db = Config::getInstance()->getConnection();
+    }
+
+    public function login($email, $password) {
+        $sql = "SELECT id, email, password FROM `_PDUsers` WHERE email = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows == 1) {
+            $user = $result->fetch_assoc();
+            if ($password === $user['password']) {
+                $_SESSION["loggedin"] = true;
+                $_SESSION["id"] = $user['id'];
+                $_SESSION["email"] = $user['email'];
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+// LoginForm class to handle form processing
+class LoginForm {
+    private $email = '';
+    private $password = '';
+    private $email_err = '';
+    private $password_err = '';
+    private $login_err = '';
+
+    public function processForm() {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $this->validateEmail();
+            $this->validatePassword();
+
+            if (empty($this->email_err) && empty($this->password_err)) {
+                $user = new User();
+                if ($user->login($this->email, $this->password)) {
+                    header("location: index.php");
+                    exit;
+                } else {
+                    $this->login_err = "Invalid email or password.";
+                }
+            }
+        }
+    }
+
+    private function validateEmail() {
+        if (empty(trim($_POST["email"]))) {
+            $this->email_err = "Please enter your email.";
+        } else {
+            $this->email = trim($_POST["email"]);
+        }
+    }
+
+    private function validatePassword() {
+        if (empty(trim($_POST["password"]))) {
+            $this->password_err = "Please enter your password.";
+        } else {
+            $this->password = trim($_POST["password"]);
+        }
+    }
+
+    public function getEmail() { return $this->email; }
+    public function getEmailErr() { return $this->email_err; }
+    public function getPasswordErr() { return $this->password_err; }
+    public function getLoginErr() { return $this->login_err; }
+}
+
+// Usage
+$loginForm = new LoginForm();
+$loginForm->processForm();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -83,24 +123,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="./assets/css/style.css">
     <style>
         @keyframes gradient {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .body {
-            /* background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
             background-color: var(--white);
             background-size: 400% 400%;
-            /* animation: gradient 15s ease infinite; */
             height: 100vh;
             margin: 0;
             padding: 0;
@@ -183,20 +213,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                         </div>
                                         <?php
-                                        if (!empty($login_err)) {
-                                            echo '<div class="alert alert-danger">' . $login_err . '</div>';
+                                        if (!empty($loginForm->getLoginErr())) {
+                                            echo '<div class="alert alert-danger">' . $loginForm->getLoginErr() . '</div>';
                                         }
                                         ?>
                                         <form class="user" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                                             <div class="form-group mb-3">
                                                 <label for="email" class="form-label">Email Address</label>
-                                                <input type="email" class="form-control form-control-user <?php echo (!empty($email_err)) ? 'is-invalid' : ''; ?>" id="email" name="email" value="<?php echo $email; ?>" aria-describedby="emailHelp" placeholder="Enter Email Address...">
-                                                <span class="error-message"><?php echo $email_err; ?></span>
+                                                <input type="email" class="form-control form-control-user <?php echo (!empty($loginForm->getEmailErr())) ? 'is-invalid' : ''; ?>" id="email" name="email" value="<?php echo $loginForm->getEmail(); ?>" aria-describedby="emailHelp" placeholder="Enter Email Address...">
+                                                <span class="error-message"><?php echo $loginForm->getEmailErr(); ?></span>
                                             </div>
                                             <div class="form-group mb-3">
                                                 <label for="password" class="form-label">Password</label>
-                                                <input type="password" class="form-control form-control-user <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>" id="password" name="password" placeholder="Password">
-                                                <span class="error-message"><?php echo $password_err; ?></span>
+                                                <input type="password" class="form-control form-control-user <?php echo (!empty($loginForm->getPasswordErr())) ? 'is-invalid' : ''; ?>" id="password" name="password" placeholder="Password">
+                                                <span class="error-message"><?php echo $loginForm->getPasswordErr(); ?></span>
                                             </div>
                                             <div class="form-group mb-3">
                                                 <div class="custom-control custom-checkbox small">
@@ -225,8 +255,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
     </div>
-
-
 
     <!-- Footer -->
     <?php include "./assets/include/footer.php" ?>
