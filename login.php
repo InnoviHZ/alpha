@@ -1,25 +1,69 @@
 <?php
 session_start();
-include "./assets/include/config.php";
+require_once "./assets/include/config.php";
 
-if (isset($_POST['submit'])) {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+$email = $password = '';
+$email_err = $password_err = $login_err = '';
 
-    // select from db
-    $select = "SELECT * FROM `_PDUsers` WHERE email = '$email'";
-    $query = mysqli_query($conn, $select);
-    $num_row = mysqli_num_rows($query);
-    if ($num_row == 0) {
-        echo "<script>alert('email Not found')</script>";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Validate email
+    if (empty(trim($_POST["email"]))) {
+        $email_err = "Please enter your email.";
     } else {
-        $row = mysqli_fetch_assoc($query);
-        if ($row['password'] == $password) {
-            header("LOCATION:index.php");
-        } else {
-            echo "<script>alert('password is wrong')</script>";
+        $email = trim($_POST["email"]);
+    }
+
+    // Validate password
+    if (empty(trim($_POST["password"]))) {
+        $password_err = "Please enter your password.";
+    } else {
+        $password = trim($_POST["password"]);
+    }
+
+    // Check input errors before querying the database
+    if (empty($email_err) && empty($password_err)) {
+        $sql = "SELECT id, email, password FROM `_PDUsers` WHERE email = ?";
+
+        if ($stmt = mysqli_prepare($conn, $sql)) {
+            mysqli_stmt_bind_param($stmt, "s", $param_email);
+            $param_email = $email;
+
+            if (mysqli_stmt_execute($stmt)) {
+                mysqli_stmt_store_result($stmt);
+
+                if (mysqli_stmt_num_rows($stmt) == 1) {
+                    mysqli_stmt_bind_result($stmt, $id, $db_email, $db_password);
+                    if (mysqli_stmt_fetch($stmt)) {
+                        if ($password === $db_password) {
+                            // Password is correct, start a new session
+                            session_start();
+
+                            // Store data in session variables
+                            $_SESSION["loggedin"] = true;
+                            $_SESSION["id"] = $id;
+                            $_SESSION["email"] = $db_email;
+
+                            // Redirect user to welcome page
+                            header("location: index.php");
+                            exit;
+                        } else {
+                            // Password is not valid
+                            $login_err = "Invalid email or password.";
+                        }
+                    }
+                } else {
+                    // Email doesn't exist
+                    $login_err = "Invalid email or password.";
+                }
+            } else {
+                $login_err = "Oops! Something went wrong. Please try again later.";
+            }
+
+            mysqli_stmt_close($stmt);
         }
     }
+
+    mysqli_close($conn);
 }
 ?>
 <!DOCTYPE html>
@@ -60,6 +104,16 @@ if (isset($_POST['submit'])) {
             height: 100vh;
             margin: 0;
             padding: 0;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 0.25rem;
+        }
+
+        .is-invalid {
+            border-color: #dc3545;
         }
 
         .card {
@@ -189,14 +243,21 @@ if (isset($_POST['submit'])) {
                                         <div class="text-center">
                                             <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                         </div>
-                                        <form class="user" method="POST" action="">
+                                        <?php
+                                        if (!empty($login_err)) {
+                                            echo '<div class="alert alert-danger">' . $login_err . '</div>';
+                                        }
+                                        ?>
+                                        <form class="user" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                                             <div class="form-group mb-3">
-                                                <label for="exampleInputEmail" class="form-label">Email Address</label>
-                                                <input type="email" class="form-control form-control-user" id="exampleInputEmail" name="email" aria-describedby="emailHelp" placeholder="Enter Email Address..." required>
+                                                <label for="email" class="form-label">Email Address</label>
+                                                <input type="email" class="form-control form-control-user <?php echo (!empty($email_err)) ? 'is-invalid' : ''; ?>" id="email" name="email" value="<?php echo $email; ?>" aria-describedby="emailHelp" placeholder="Enter Email Address...">
+                                                <span class="error-message"><?php echo $email_err; ?></span>
                                             </div>
                                             <div class="form-group mb-3">
-                                                <label for="exampleInputPassword" class="form-label">Password</label>
-                                                <input type="password" class="form-control form-control-user" id="exampleInputPassword" name="password" placeholder="Password" required>
+                                                <label for="password" class="form-label">Password</label>
+                                                <input type="password" class="form-control form-control-user <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>" id="password" name="password" placeholder="Password">
+                                                <span class="error-message"><?php echo $password_err; ?></span>
                                             </div>
                                             <div class="form-group mb-3">
                                                 <div class="custom-control custom-checkbox small">
@@ -204,27 +265,17 @@ if (isset($_POST['submit'])) {
                                                     <label class="custom-control-label" for="customCheck">Remember Me</label>
                                                 </div>
                                             </div>
-                                            <input type="submit" class="btn btn-success btn-user btn-block mb-3 w-100" name="submit" value="Login">
-                                            <!-- <button type="submit"  >
-                                                Login
-                                            </button> -->
-                                            <hr>
-                                            <div class="text-center mb-3">
-                                                <p>Or sign in with:</p>
-                                                <a href="#" class="btn btn-google btn-user social-btn me-2">
-                                                    <i class="fab fa-google fa-fw"></i> Google
-                                                </a>
-                                                <a href="#" class="btn btn-facebook btn-user social-btn">
-                                                    <i class="fab fa-facebook-f fa-fw"></i> Facebook
-                                                </a>
-                                            </div>
+                                            <input type="submit" class="btn btn-success btn-user btn-block mb-3 w-100" value="Login">
                                         </form>
                                         <hr>
-                                        <div class="text-center">
-                                            <a class="small" href="#">Forgot Password?</a>
-                                        </div>
-                                        <div class="text-center">
-                                            <a class="small" href="#">Create an Account!</a>
+                                        <div class="text-center mb-3">
+                                            <p>Or sign in with:</p>
+                                            <a href="#" class="btn btn-google btn-user social-btn me-2">
+                                                <i class="fab fa-google fa-fw"></i> Google
+                                            </a>
+                                            <a href="#" class="btn btn-facebook btn-user social-btn">
+                                                <i class="fab fa-facebook-f fa-fw"></i> Facebook
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -235,6 +286,7 @@ if (isset($_POST['submit'])) {
             </div>
         </div>
     </div>
+
 
 
     <!-- Footer -->
