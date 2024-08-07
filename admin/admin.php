@@ -24,14 +24,14 @@
       <li class="nav-item d-none d-sm-inline-block">
         <a href="index.html" class="nav-link">Home</a>
       </li>
-      <li class="nav-item d-none d-sm-inline-block">
+      <!-- <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Contact</a>
-      </li>
+      </li> -->
     </ul>
 
     <!-- Right navbar links -->
-    <ul class="navbar-nav ml-auto">
-      <!-- Notifications Dropdown Menu -->
+    <!-- <ul class="navbar-nav ml-auto">
+      Notifications Dropdown Menu
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-bell"></i>
@@ -58,7 +58,7 @@
           <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
         </div>
       </li>
-    </ul>
+    </ul> -->
   </nav>
   <!-- /.navbar -->
 
@@ -97,139 +97,28 @@
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <li class="nav-item menu-open">
+          <li class="nav-item">
             <a href="#" class="nav-link active">
               <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Dashboard
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="./index.html" class="nav-link active">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Dashboard v1</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./index2.html" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Dashboard v2</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./index3.html" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Dashboard v3</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a href="pages/widgets.html" class="nav-link">
-              <i class="nav-icon fas fa-th"></i>
-              <p>
-                Widgets
-                <span class="right badge badge-danger">New</span>
-              </p>
+              <p>Dashboard</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="pages/calendar.html" class="nav-link">
-              <i class="nav-icon far fa-calendar-alt"></i>
-              <p>
-                Calendar
-                <span class="badge badge-info right">2</span>
-              </p>
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-users"></i>
+              <p>Users</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="pages/gallery.html" class="nav-link">
-              <i class="nav-icon far fa-image"></i>
-              <p>
-                Gallery
-              </p>
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-heart"></i>
+              <p>Donations</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="pages/kanban.html" class="nav-link">
-              <i class="nav-icon fas fa-columns"></i>
-              <p>
-                Kanban Board
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="pages/mailbox/mailbox.html" class="nav-link">
-              <i class="nav-icon far fa-envelope"></i>
-              <p>
-                Mailbox
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="pages/examples/invoice.html" class="nav-link">
-              <i class="nav-icon fas fa-book"></i>
-              <p>
-                Invoice
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="pages/examples/profile.html" class="nav-link">
-              <i class="nav-icon far fa-user"></i>
-              <p>
-                Profile
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="pages/examples/e_commerce.html" class="nav-link">
-              <i class="nav-icon fas fa-store"></i>
-              <p>
-                E-commerce
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="pages/examples/projects.html" class="nav-link">
-              <i class="nav-icon fas fa-project-diagram"></i>
-              <p>
-                Projects
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="pages/examples/project_add.html" class="nav-link">
-              <i class="nav-icon fas fa-project-diagram"></i>
-              <p>
-                Project Add
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="pages/examples/project_edit.html" class="nav-link">
-              <i class="nav-icon fas fa-project-diagram"></i>
-              <p>
-                Project Edit
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="pages/examples/project_detail.html" class="nav-link">
-              <i class="nav-icon fas fa-project-diagram"></i>
-              <p>
-                Project Detail
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="pages/examples/contacts.html" class="nav-link">
-              <i class="nav-icon far fa-address-book"></i>
-              <p>
-                Contacts
-              </p>
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-calendar"></i>
+              <p>Events</p>
             </a>
           </li>
         </ul>
@@ -270,15 +159,15 @@
               <div class="card-header">
                 <h3 class="card-title">
                   <i class="fas fa-users mr-1"></i>
-                  User Details
+                  Beneficiary Details
                 </h3>
                 <div class="card-tools">
-                  <div class="input-group input-group-sm" style="width: 150px;">
+                  <!-- <div class="input-group input-group-sm" style="width: 150px;">
                     <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
                     <div class="input-group-append">
                       <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
                     </div>
-                  </div>
+                  </div> -->
                 </div>
               </div>
               <!-- /.card-header -->
