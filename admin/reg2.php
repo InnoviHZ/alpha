@@ -218,7 +218,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ?>
                 <form id="beneficiaryForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" enctype="multipart/form-data">
                   <div class="form-group">
-                    <label for="fullName">Full Name</label>
+                    <label for="fullName">Full Name of Late</label>
+                    <input type="text" class="form-control" id="fullName" name="fullName" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="yod">Year of Death</label>
+                    <input type="date" class="form-control" id="yod" name="yod" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="fullName">Full Name of Beneficiary</label>
                     <input type="text" class="form-control" id="fullName" name="fullName" required>
                   </div>
                   <div class="form-group">
@@ -231,7 +239,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                       <option value="">Select Gender</option>
                       <option value="male">Male</option>
                       <option value="female">Female</option>
-                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="lga">Local Government Area (LGA)</label>
+                    <select class="form-control" id="lga" name="lga" onchange="updateWards()" required>
+                      <option value="">Select LGA</option>
+                      <option value="Alkaleri">Alkaleri</option>
+                      <option value="Bauchi">Bauchi</option>
+                      <option value="Bogoro">Bogoro</option>
+                      <option value="Dambam">Dambam</option>
+                      <option value="Dass">Dass</option>
+                      <option value="Ganjuwa">Ganjuwa</option>
+                      <option value="Giade">Giade</option>
+                      <option value="Itas/Gadau">Itas/Gadau</option>
+                      <option value="Jama'are">Jama'are</option>
+                      <option value="Katagum">Katagum</option>
+                      <option value="Kirfi">Kirfi</option>
+                      <option value="Misau">Misau</option>
+                      <option value="Ningi">Ningi</option>
+                      <option value="Shira">Shira</option>
+                      <option value="Tafawa Balewa">Tafawa Balewa</option>
+                      <option value="Toro">Toro</option>
+                      <option value="Warji">Warji</option>
+                      <option value="Zaki">Zaki</option>
+                      <option value="Darazo">Darazo</option>
+                      <option value="Gamawa">Gamawa</option>
+                      <!-- Add more LGAs here -->
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="ward">Ward</label>
+                    <select class="form-control" id="ward" name="ward" required>
+                      <option value="">Select Ward</option>
                     </select>
                   </div>
                   <div class="form-group">
@@ -319,6 +360,50 @@ $(function () {
     }
   }
 });
+
+
+        const lgaWards = {
+            "Alkaleri": ["Alkaleri", "Gar", "Gwa'na", "Kasshi", "Mado", "Pali", "Yelwa"],
+            "Bauchi": ["Birshi", "Dan'iya", "Danlami", "Dawaki", "Galambi", "Hardo", "Makama Sarkin Baki"],
+            "Bogoro": ["Bogoro", "Boi", "Lusa", "Mallam Sidi", "Tafawa Balewa"],
+            "Dambam": ["Dambam", ""],
+            "Dass": ["Dass", ""],
+            "Ganjuwa": ["Ganjuwa", "Birni", "Ganjuwa", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
+            "Giade": ["Giade", ""],
+            "Itas/Gadau": ["Itas/Gadau", "Birni", "Gadau"],
+            "Katagum": ["Katagum", "Azare"],
+            "Kirfi": ["Kirfi", ""],
+            "Misau": ["Misau", ""],
+            "Ningi": ["Ningi", "Birni", "Gadau", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
+            "Shira": ["Shira", ""],
+            "Tafawa Balewa": ["Tafawa Balewa", "Birni", "Gadau", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
+            "Toro": ["Toro", "Birni", "Gadau", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
+            "Warji": ["Warji", ""],
+            "Zaki": ["Zaki", "Birni", "Gadau", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
+            "Darazo": ["Darazo", "Birni", "Gadau", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
+            "Gamawa": ["Gamawa", ""],
+                        // Add more LGAs and their respective wards here
+        };
+
+        function updateWards() {
+            const lgaSelect = document.getElementById("lga");
+            const wardSelect = document.getElementById("ward");
+            const selectedLGA = lgaSelect.value;
+
+            // Clear existing options
+            wardSelect.innerHTML = "<option value=''>Select Ward</option>";
+
+            if (selectedLGA in lgaWards) {
+                lgaWards[selectedLGA].forEach(ward => {
+                    const option = document.createElement("option");
+                    option.value = ward;
+                    option.textContent = ward;
+                    wardSelect.appendChild(option);
+                });
+            }
+        }
+    
+
 </script>
 </body>
 </html>
