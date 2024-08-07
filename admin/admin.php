@@ -244,7 +244,7 @@ $picture = $_SESSION["picture"];
                     <tbody>
                       <tr>
                         <td>1</td>
-                        <td>John Doe</td>
+                        <td><?php echo $name ?></td>
                         <td>johndoe@example.com</td>
                         <td>Admin</td>
                         <td>
