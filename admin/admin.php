@@ -2,6 +2,18 @@
 session_start();
 require_once "../assets/include/config.php";
 
+if (!isset($_SESSION["loggedin"]) ||  $_SESSION["loggedin"] !== true ) {
+  header("location:../login.php");
+  exit;
+}
+
+$id = $_SESSION["id"];
+$email = $_SESSION["email"];
+$name = $_SESSION["name"];
+$type = $_SESSION["type"];
+$picture = $_SESSION["picture"];
+
+
 ?>
 
 <!DOCTYPE html>
@@ -83,11 +95,11 @@ require_once "../assets/include/config.php";
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
           <div class="image">
-            <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+            <img src="../assets/images/admin/<?php echo $picture ?>" class="img-circle elevation-2" alt="User Image">
           </div>
           <div class="info">
-            <a href="#" class="d-block">Alexander Pierce</a>
-            <span class="badge badge-info">Administrator</span>
+            <a href="#" class="d-block"><?php echo $name ?></a>
+            <span class="badge badge-info"><?php echo $type ?></span>
           </div>
         </div>
 

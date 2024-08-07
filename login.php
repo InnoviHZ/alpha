@@ -12,7 +12,7 @@ class User {
     }
 
     public function login($email, $password) {
-        $sql = "SELECT id, email, password FROM `_PDAdmin` WHERE email = ?";
+        $sql = "SELECT * FROM `_PDAdmin` WHERE email = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -24,6 +24,7 @@ class User {
                 $_SESSION["loggedin"] = true;
                 $_SESSION["id"] = $user['id'];
                 $_SESSION["email"] = $user['email'];
+                $_SESSION["name"] = $user['name'];
                 $_SESSION["type"] = $user['type'];
                 $_SESSION["picture"] = $user['picture'];
                 
