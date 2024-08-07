@@ -1,3 +1,15 @@
+<?php
+session_start();
+require_once "./assets/include/config.php";
+
+$_SESSION["id"] = $user['id'];
+$_SESSION["email"] = $user['email'];
+$_SESSION["type"] = $user['type'];
+$_SESSION["picture"] = $user['picture'];
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 

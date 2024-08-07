@@ -50,7 +50,7 @@ class LoginForm {
             if (empty($this->email_err) && empty($this->password_err)) {
                 $user = new User();
                 if ($user->login($this->email, $this->password)) {
-                    header("location: index.php");
+                    header("location: ./admin/admin.php");
                     exit;
                 } else {
                     $this->login_err = "Invalid email or password.";
