@@ -1,12 +1,6 @@
 <?php
 session_start();
-require_once "./assets/include/config.php";
-
-$_SESSION["id"] = $user['id'];
-$_SESSION["email"] = $user['email'];
-$_SESSION["type"] = $user['type'];
-$_SESSION["picture"] = $user['picture'];
-
+require_once "../assets/include/config.php";
 
 ?>
 
@@ -80,7 +74,7 @@ $_SESSION["picture"] = $user['picture'];
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <!-- Brand Logo -->
       <a href="index.html" class="brand-link">
-        <img src="../assets/images/logo/logo1.svg" alt="Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <img src="../assets/images/logo/logo1.svg" alt="Logo" class="brand-image " style="opacity: .8">
         <span class="brand-text font-weight-light">ADMIN</span>
       </a>
 
