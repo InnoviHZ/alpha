@@ -2,30 +2,7 @@
 session_start();
 
 // Config class to handle database connection
-class Config {
-    private static $instance = null;
-    private $conn;
-
-    private function __construct() {
-        // Replace with your actual database credentials
-        $this->conn = new mysqli("localhost", "root", "", "alpha");
-        if ($this->conn->connect_error) {
-            die("Connection failed: " . $this->conn->connect_error);
-        }
-    }
-
-    public static function getInstance() {
-        if (self::$instance == null) {
-            self::$instance = new Config();
-        }
-        return self::$instance;
-    }
-
-    public function getConnection() {
-        return $this->conn;
-    }
-}
-
+require_once "./assets/include/config.php";
 // User class to handle user-related operations
 class User {
     private $db;
@@ -35,7 +12,7 @@ class User {
     }
 
     public function login($email, $password) {
-        $sql = "SELECT id, email, password FROM `_PDUsers` WHERE email = ?";
+        $sql = "SELECT id, email, password FROM `_PDAdmin` WHERE email = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -47,6 +24,9 @@ class User {
                 $_SESSION["loggedin"] = true;
                 $_SESSION["id"] = $user['id'];
                 $_SESSION["email"] = $user['email'];
+                $_SESSION["type"] = $user['type'];
+                $_SESSION["picture"] = $user['picture'];
+                
                 return true;
             }
         }

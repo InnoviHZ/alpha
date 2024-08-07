@@ -1,14 +1,26 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "alpha";
+class Config {
+    private static $instance = null;
+    private $conn;
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+    private function __construct() {
+        // Replace with your actual database credentials
+        $this->conn = new mysqli("localhost", "root", "", "alpha");
+        if ($this->conn->connect_error) {
+            die("Connection failed: " . $this->conn->connect_error);
+        }
+    }
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    public static function getInstance() {
+        if (self::$instance == null) {
+            self::$instance = new Config();
+        }
+        return self::$instance;
+    }
+
+    public function getConnection() {
+        return $this->conn;
+    }
 }
+
 // echo "Connected successfully";
