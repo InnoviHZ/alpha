@@ -17,14 +17,20 @@ $picture = $_SESSION["picture"];
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Collect form data
     $fullName = $_POST['fullName'];
+    $yod   = $_POST['yod'];
     $fullNameB = $_POST['fullNameB'];
-    $dob = $_POST['dob'];
+    $dob   = $_POST['dob'];
     $gender = $_POST['gender'];
+    $lga = $_POST['lga'];
+    $ward = $_POST['ward'];
     $address = $_POST['address'];
     $phone = $_POST['phone'];
     $email = $_POST['email'];
     $idNumber = $_POST['idNumber'];
     $benefitType = $_POST['benefitType'];
+    $photo = $_FILES["photo"]["name"];
+    $opNumber = $_POST['opNumber'];
+    
 
     // Handle file upload
     $targetDir = "../assets/images/beneficiaries/";
@@ -38,11 +44,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Upload file to server
         if (move_uploaded_file($_FILES["photo"]["tmp_name"], $targetFilePath)) {
             // Insert beneficiary data into database
-            $sql = "INSERT INTO _PDUsers (full_name, dob, gender, address, phone, email, id_number, benefit_type, photo) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO _PDUsers (full_name, yod, full_name_b, dob, gender, lga, ward, address, op_number, phone, email, id_number, benefit_type, photo) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,)";
             
             if ($stmt = $mysqli->prepare($sql)) {
-                $stmt->bind_param("sssssssss", $fullName, $dob, $gender, $address, $phone, $email, $idNumber, $benefitType, $fileName);
+                $stmt->bind_param("sssssssss", $fullName, $yod, $fullNameB, $dob, $gender, $lga, $ward, $address, $phone, $email, $idNumber, $benefitType, $photo, $opNumber );
                 
                 if ($stmt->execute()) {
                     $successMessage = "Beneficiary registered successfully.";
@@ -226,8 +232,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input type="date" class="form-control" id="yod" name="yod" required>
                   </div>
                   <div class="form-group">
-                    <label for="fullName">Full Name of Beneficiary</label>
-                    <input type="text" class="form-control" id="fullName" name="fullName" required>
+                    <label for="fullNameB">Full Name of Beneficiary</label>
+                    <input type="text" class="form-control" id="fullNameB" name="fullNameB" required>
                   </div>
                   <div class="form-group">
                     <label for="dob">Date of Birth</label>
@@ -280,6 +286,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
                   </div>
                   <div class="form-group">
+                    <label for="opNumber">Number of Orphans</label>
+                    <input type="text" class="form-control" id="opNumber" name="opNumber" required>
+                  </div>
+                  <div class="form-group">
                     <label for="phone">Phone Number</label>
                     <input type="tel" class="form-control" id="phone" name="phone" required>
                   </div>
@@ -325,11 +335,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-
+  <footer class="main-footer">
+      <strong>Copyright &copy; 2014-2023 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
+      All rights reserved.
+      <div class="float-right d-none d-sm-inline-block">
+        <b>Version</b> 3.2.0
+      </div>
+    </footer>
   <!-- Footer code here (same as before) -->
 </div>
 <!-- ./wrapper -->
-
+    
 <!-- jQuery -->
 <script src="plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
