@@ -1,8 +1,9 @@
 <?php
 session_start();
 require_once "../assets/include/config.php";
+require_once "../assets/include/fuctions.php";
 
-if (!isset($_SESSION["loggedin"]) ||  $_SESSION["loggedin"] !== true ) {
+if (!isset($_SESSION["loggedin"]) ||  $_SESSION["loggedin"] !== true) {
   header("location:../login.php");
   exit;
 }
@@ -42,7 +43,7 @@ $picture = $_SESSION["picture"];
           <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="index.html" class="nav-link">Home</a>
+          <a href="admin.php" class="nav-link">Home</a>
         </li>
         <!-- <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Contact</a>
@@ -51,13 +52,13 @@ $picture = $_SESSION["picture"];
 
       <!-- Right navbar links -->
       <ul class="navbar-nav ml-auto">
-      <!-- Notifications Dropdown Menu -->
-      <li class="nav-item">
-        <a class="nav-link" href="logout.php">
-          <i class="fa fa-sign-out-alt"></i>
-        </a>
-      </li>
-    </ul>
+        <!-- Notifications Dropdown Menu -->
+        <li class="nav-item">
+          <a class="nav-link" href="logout.php">
+            <i class="fa fa-sign-out-alt"></i>
+          </a>
+        </li>
+      </ul>
     </nav>
     <!-- /.navbar -->
 
@@ -231,42 +232,7 @@ $picture = $_SESSION["picture"];
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                  <table id="userTable" class="table table-bordered table-striped">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td><?php echo $name ?></td>
-                        <td>johndoe@example.com</td>
-                        <td>Admin</td>
-                        <td>
-                          <button class="btn btn-primary btn-sm">View</button>
-                          <button class="btn btn-warning btn-sm">Update</button>
-                          <button class="btn btn-danger btn-sm">Delete</button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>2</td>
-                        <td>Jane Smith</td>
-                        <td>janesmith@example.com</td>
-                        <td>User</td>
-                        <td>
-                          <button class="btn btn-primary btn-sm">View</button>
-                          <button class="btn btn-warning btn-sm">Update</button>
-                          <button class="btn btn-danger btn-sm">Delete</button>
-                        </td>
-                      </tr>
-                      <!-- Additional rows as needed -->
-                    </tbody>
-                  </table>
+                  <?php displayUsersTable(); ?>
                 </div>
                 <!-- /.card-body -->
               </div>
@@ -315,7 +281,7 @@ $picture = $_SESSION["picture"];
   <script src="plugins/datatables-buttons/js/buttons.print.min.js"></script>
   <script src="plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
   <!-- AdminLTE App -->
-  <!-- <script src="dist/js/adminlte.min.js"></script> -->
+  <script src="dist/js/adminlte.min.js"></script>
   <!-- AdminLTE for demo purposes -->
   <!-- <script src="dist/js/demo.js"></script> -->
   <!-- Page specific script -->
