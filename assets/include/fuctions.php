@@ -39,8 +39,10 @@ function displayUsersTable()
                 echo '<td>';
                 echo '<button class="btn btn-primary btn-sm">View</button> ';
                 echo '<button class="btn btn-warning btn-sm">Update</button> ';
-                echo '<button class="btn btn-danger btn-sm">Delete</button>';
-                echo '</td>';
+                echo '<form method="POST" action="delete_user.php" style="display:inline-block;">';
+                echo '<input type="hidden" name="user_id" value="' . $row['id'] . '">';
+                echo '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this user?\')">Delete</button>';
+                echo '</form>';                echo '</td>';
                 echo '</tr>';
                 $counter++;
             }
