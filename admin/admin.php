@@ -162,7 +162,7 @@ $picture = $_SESSION["picture"];
                 <div class="icon">
                   <i class="fas fa-user-plus"></i>
                 </div>
-                <a href="./reg.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="./reg2.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->

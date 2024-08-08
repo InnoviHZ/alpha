@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $benefitType = $_POST['benefitType'];
     $photo = $_FILES["photo"]["name"];
     $opNumber = $_POST['opNumber'];
-    
+
 
     // Handle file upload
     $targetDir = "../assets/images/beneficiaries/";
@@ -44,12 +44,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Upload file to server
         if (move_uploaded_file($_FILES["photo"]["tmp_name"], $targetFilePath)) {
             // Insert beneficiary data into database
-            $sql = "INSERT INTO _PDUsers (full_name, yod, full_name_b, dob, gender, lga, ward, address, op_number, phone, email, id_number, benefit_type, photo) 
+            $sql = "INSERT INTO _PDUsers (full_name, yod, full_name_b, dob, gender, lga, ward, address, op_number, phone, email, id_number, benefit_type, photo)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,)";
-            
+
             if ($stmt = $mysqli->prepare($sql)) {
                 $stmt->bind_param("sssssssss", $fullName, $yod, $fullNameB, $dob, $gender, $lga, $ward, $address, $phone, $email, $idNumber, $benefitType, $photo, $opNumber );
-                
+
                 if ($stmt->execute()) {
                     $successMessage = "Beneficiary registered successfully.";
                 } else {
@@ -99,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="index.html" class="nav-link">Home</a>
+          <a href="admin.php" class="nav-link">Home</a>
         </li>
         <!-- <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Contact</a>
@@ -207,7 +207,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <section class="content">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-12">
+          <div class="col-md-6 m-auto">
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">Register New Beneficiary</h3>
@@ -345,7 +345,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <!-- Footer code here (same as before) -->
 </div>
 <!-- ./wrapper -->
-    
+
 <!-- jQuery -->
 <script src="plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
@@ -366,12 +366,12 @@ $(function () {
   function readURL(input) {
     if (input.files && input.files[0]) {
       var reader = new FileReader();
-      
+
       reader.onload = function(e) {
         $('#imagePreview').attr('src', e.target.result);
         $('#imagePreview').show();
       }
-      
+
       reader.readAsDataURL(input.files[0]);
     }
   }
@@ -418,7 +418,7 @@ $(function () {
                 });
             }
         }
-    
+
 
 </script>
 </body>
