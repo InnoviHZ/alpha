@@ -74,10 +74,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errorMessage = "Error: " . $mysqli->error;
       }
     } else {
-      $errorMessage = "Sorry, there was an error uploading your file.";
+      echo "
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css'>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js'></script>
+        <script>
+        $(document).ready(function() {
+            toastr.error('Sorry, there was an error uploading your file.');
+        });
+        </script>";
     }
   } else {
-    $errorMessage = "Sorry, only JPG, JPEG, PNG & GIF files are allowed to upload.";
+    echo "
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css'>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js'></script>
+    <script>
+    $(document).ready(function() {
+        toastr.error('Sorry, only JPG, JPEG, PNG & GIF files are allowed to upload.');
+    });
+    </script>";
   }
 }
 ?>
