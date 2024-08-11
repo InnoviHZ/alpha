@@ -14,7 +14,6 @@ $name = $_SESSION["name"];
 $type = $_SESSION["type"];
 $picture = $_SESSION["picture"];
 
-// Function to check if user has permission
 
 ?>
 
@@ -46,6 +45,9 @@ $picture = $_SESSION["picture"];
         <li class="nav-item d-none d-sm-inline-block">
           <a href="admin.php" class="nav-link">Home</a>
         </li>
+        <!-- <li class="nav-item d-none d-sm-inline-block">
+    <a href="#" class="nav-link">Contact</a>
+  </li> -->
       </ul>
 
       <!-- Right navbar links -->
@@ -67,6 +69,7 @@ $picture = $_SESSION["picture"];
         </li>
       </ul>
     </nav>
+
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
@@ -90,6 +93,18 @@ $picture = $_SESSION["picture"];
           </div>
         </div>
 
+        <!-- SidebarSearch Form -->
+        <!-- <div class="form-inline">
+          <div class="input-group" data-widget="sidebar-search">
+            <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+            <div class="input-group-append">
+              <button class="btn btn-sidebar">
+                <i class="fas fa-search fa-fw"></i>
+              </button>
+            </div>
+          </div>
+        </div> -->
+
         <!-- Sidebar Menu -->
         <nav class="mt-2">
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
@@ -99,30 +114,12 @@ $picture = $_SESSION["picture"];
                 <p>Dashboard</p>
               </a>
             </li>
-            <?php if (hasPermission('Super')): ?>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-users-cog"></i>
-                <p>Manage Admins</p>
-              </a>
-            </li>
-            <?php endif; ?>
-            <?php if (hasPermission('Admin')): ?>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-user-tie"></i>
-                <p>Manage Managers</p>
-              </a>
-            </li>
-            <?php endif; ?>
-            <?php if (hasPermission('Manager')): ?>
             <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-users"></i>
-                <p>Manage Beneficiaries</p>
+                <p>Users</p>
               </a>
             </li>
-            <?php endif; ?>
             <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-heart"></i>
@@ -166,13 +163,12 @@ $picture = $_SESSION["picture"];
       <section class="content">
         <div class="container-fluid">
           <div class="row">
-            <?php if (hasPermission('Manager')): ?>
             <div class="col-lg-3 col-6">
               <!-- small box -->
               <div class="small-box bg-info">
                 <div class="inner">
                   <h3>150</h3>
-                  <p>New Beneficiaries</p>
+                  <p>New Users</p>
                 </div>
                 <div class="icon">
                   <i class="fas fa-user-plus"></i>
@@ -180,40 +176,10 @@ $picture = $_SESSION["picture"];
                 <a href="./reg2.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
-            <?php endif; ?>
-            <?php if (hasPermission('Admin')): ?>
+            <!-- ./col -->
             <div class="col-lg-3 col-6">
               <!-- small box -->
               <div class="small-box bg-success">
-                <div class="inner">
-                  <h3>30</h3>
-                  <p>Active Managers</p>
-                </div>
-                <div class="icon">
-                  <i class="fas fa-user-tie"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-              </div>
-            </div>
-            <?php endif; ?>
-            <?php if (hasPermission('Super')): ?>
-            <div class="col-lg-3 col-6">
-              <!-- small box -->
-              <div class="small-box bg-warning">
-                <div class="inner">
-                  <h3>10</h3>
-                  <p>Active Admins</p>
-                </div>
-                <div class="icon">
-                  <i class="fas fa-users-cog"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-              </div>
-            </div>
-            <?php endif; ?>
-            <div class="col-lg-3 col-6">
-              <!-- small box -->
-              <div class="small-box bg-danger">
                 <div class="inner">
                   <h3>$53,000</h3>
                   <p>Total Donations</p>
@@ -224,6 +190,35 @@ $picture = $_SESSION["picture"];
                 <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+              <!-- small box -->
+              <div class="small-box bg-warning">
+                <div class="inner">
+                  <h3>44</h3>
+                  <p>Upcoming Events</p>
+                </div>
+                <div class="icon">
+                  <i class="fas fa-calendar-alt"></i>
+                </div>
+                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+              <!-- small box -->
+              <div class="small-box bg-danger">
+                <div class="inner">
+                  <h3>65</h3>
+                  <p>Active Volunteers</p>
+                </div>
+                <div class="icon">
+                  <i class="fas fa-hands-helping"></i>
+                </div>
+                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              </div>
+            </div>
+            <!-- ./col -->
           </div>
           <!-- /.row -->
           <!-- Info boxes -->
@@ -234,20 +229,20 @@ $picture = $_SESSION["picture"];
                 <div class="card-header">
                   <h3 class="card-title">
                     <i class="fas fa-users mr-1"></i>
-                    <?php
-                    if (hasPermission('Super')) echo "Admin and Manager Details";
-                    elseif (hasPermission('Admin')) echo "Manager and Beneficiary Details";
-                    else echo "Beneficiary Details";
-                    ?>
+                    Beneficiary Details
                   </h3>
+                  <div class="card-tools">
+                    <!-- <div class="input-group input-group-sm" style="width: 150px;">
+                    <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+                    <div class="input-group-append">
+                      <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                    </div>
+                  </div> -->
+                  </div>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                  <?php
-                  if (hasPermission('Super')) displayAdminManagerTable();
-                  elseif (hasPermission('Admin')) displayManagerTable();
-                  else displayBeneficiaryTable();
-                  ?>
+                  <?php displayUsersTable(); ?>
                 </div>
                 <!-- /.card-body -->
               </div>
@@ -297,6 +292,8 @@ $picture = $_SESSION["picture"];
   <script src="plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
   <!-- AdminLTE App -->
   <script src="dist/js/adminlte.min.js"></script>
+  <!-- AdminLTE for demo purposes -->
+  <!-- <script src="dist/js/demo.js"></script> -->
   <!-- Page specific script -->
   <script>
     $(function() {
