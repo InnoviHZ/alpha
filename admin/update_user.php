@@ -78,6 +78,7 @@
 
                                             if ($stmt->execute()) {
                                                 echo "<div class='alert alert-success'>User details updated successfully.</div>";
+                                                header("Location:./view_user.php?id=$userId");
                                             } else {
                                                 echo "<div class='alert alert-danger'>Error updating user details: " . $stmt->error . "</div>";
                                             }
