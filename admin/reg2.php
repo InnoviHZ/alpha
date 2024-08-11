@@ -54,7 +54,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("sssssssssssssss", $fullName, $yod, $fullNameB, $dob, $gender, $lga, $ward, $address, $phone, $email, $idNumber, $benefitType, $photo, $opNumber, $reg_by);
 
         if ($stmt->execute()) {
-          $successMessage = "Beneficiary registered successfully.";
+          echo "
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css'>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js'></script>
+        <script>
+        $(document).ready(function() {
+            toastr.success('Registration Successful');
+            setTimeout(function() {
+                alert('Registration Successful');
+            }, 1000); // 3 seconds delay before redirecting
+        });
+        </script>";
         } else {
           $errorMessage = "Error: " . $stmt->error;
         }
@@ -81,6 +92,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <!-- Include CSS -->
   <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
+  <!-- Toastr CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+  <!-- Toastr JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
   <!-- Additional CSS for file input and image preview -->
   <style>
     .custom-file-input:lang(en)~.custom-file-label::after {

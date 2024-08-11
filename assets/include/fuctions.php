@@ -31,7 +31,8 @@ function displayUsersTable()
             $counter = 1;
             while ($row = $result->fetch_assoc()) {
                 echo '<tr>';
-                echo '<td>' . $counter . '</td>';
+                echo '<td>' . $counter ;
+
                 echo '<td>' . htmlspecialchars($row['full_name']) . '</td>';
                 echo '<td>' . htmlspecialchars($row['address']) . '</td>';
                 echo '<td>' . htmlspecialchars($row['phone']) . '</td>';
