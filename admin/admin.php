@@ -244,7 +244,7 @@ $picture = $_SESSION["picture"];
                 <!-- /.card-header -->
                 <div class="card-body">
                   <?php
-                  if (hasPermission('Super')) displayAdminManagerTable();
+                  if (hasPermission('Super')) displayAdminTable();
                   elseif (hasPermission('Admin')) displayManagerTable();
                   else displayBeneficiaryTable();
                   ?>
