@@ -56,16 +56,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($stmt->execute()) {
           echo "
         <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css'>
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
+        <link href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css' rel='stylesheet'>
+        <script src='https://code.jquery.com/jquery-3.6.0.min.js'></script>
         <script src='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js'></script>
+        <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js'></script>
+
         <script>
         $(document).ready(function() {
             toastr.success('Registration Successful');
             setTimeout(function() {
-                alert('Registration Successful');
-            }, 1000); // 3 seconds delay before redirecting
+                $('#successModal').modal('show');
+            }, 1500); // Show the modal after 1.5 seconds
         });
-        </script>";
+        </script>
+
+        <!-- Bootstrap Modal -->
+        <div class='modal fade' id='successModal' tabindex='-1' role='dialog' aria-labelledby='successModalLabel' aria-hidden='true'>
+            <div class='modal-dialog' role='document'>
+                <div class='modal-content'>
+                    <div class='modal-header'>
+                        <h5 class='modal-title' id='successModalLabel'>Registration Successful</h5>
+                        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                            <span aria-hidden='true'>&times;</span>
+                        </button>
+                    </div>
+                    <div class='modal-body'>
+                        Your registration was successful. would you like to do go back to Dashboard?
+                    </div>
+                    <div class='modal-footer'>
+                        <a href='admin.php'><button type='button' class='btn btn-primary'>Go back to Dashboard</button></a>
+                        <button type='button' class='btn btn-secondary' data-dismiss='modal'>No Continue</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        ";
         } else {
           $errorMessage = "Error: " . $stmt->error;
         }
@@ -110,6 +135,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
   <!-- Toastr CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
 
   <!-- Toastr JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -393,6 +420,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <script src="dist/js/adminlte.min.js"></script>
   <!-- bs-custom-file-input -->
   <script src="plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- Toastr JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
   <script>
     $(function() {
       bsCustomFileInput.init();
