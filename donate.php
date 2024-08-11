@@ -20,6 +20,7 @@
             margin-bottom: 10vh;
             padding: 0;
         }
+
         .card {
             border: none;
             border-radius: 1rem;
@@ -148,6 +149,8 @@
 
     <!-- Footer (same as before) -->
     <?php include "./assets/include/footer.php" ?>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
 
 </body>
 

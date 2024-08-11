@@ -45,7 +45,7 @@
                         <button class="btn btn-outline-primary me-2">Login</button>
                     </a>
                     <a href="./slip-printing.php">
-                        <button class="btn btn-outline-secondary me-2">Print Slip</button>
+                        <button5 class="btn btn-outline-secondary me-2">Slip</button5>
                     </a>
                     <a href="./donate.php">
                         <button class="btn btn-outline-success me-2">Donation</button>

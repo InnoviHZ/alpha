@@ -46,20 +46,30 @@ $picture = $_SESSION["picture"];
           <a href="admin.php" class="nav-link">Home</a>
         </li>
         <!-- <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Contact</a>
-      </li> -->
+    <a href="#" class="nav-link">Contact</a>
+  </li> -->
       </ul>
 
       <!-- Right navbar links -->
       <ul class="navbar-nav ml-auto">
-        <!-- Notifications Dropdown Menu -->
-        <li class="nav-item">
-          <a class="nav-link" href="logout.php">
-            <i class="fa fa-sign-out-alt"></i>
+        <!-- Profile Dropdown Menu -->
+        <li class="nav-item dropdown">
+          <a class="nav-link" data-toggle="dropdown" href="#">
+            <i class="fas fa-user"></i>
           </a>
+          <div class="dropdown-menu dropdown-menu-right">
+            <a href="profile.php" class="dropdown-item">
+              <i class="fas fa-user-circle mr-2"></i> Profile
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="logout.php" class="dropdown-item">
+              <i class="fas fa-sign-out-alt mr-2"></i> Logout
+            </a>
+          </div>
         </li>
       </ul>
     </nav>
+
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
