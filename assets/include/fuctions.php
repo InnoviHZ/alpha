@@ -186,3 +186,24 @@ function hasPermission($requiredRole) {
     $roleHierarchy = ['Super' => 3, 'Admin' => 2, 'Manager' => 1];
     return $roleHierarchy[$_SESSION['type']] >= $roleHierarchy[$requiredRole];
 }
+
+
+function generateUniqueId() {
+    // Define the prefix
+    $prefix = 'SUD-24-';
+    
+    // Generate a random 6-byte value and convert it to a hexadecimal string
+    // This ensures the suffix part is 9 characters or less
+    $randomBytes = bin2hex(random_bytes(6));
+    
+    // Use only the first 7 characters of the random bytes to leave space for 2 random letters
+    $suffix = substr($randomBytes, 0, 7);
+    
+    // Generate two random letters
+    $letters = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 2);
+    
+    // Combine the prefix, suffix, and letters to form the unique ID
+    $uniqueId = $prefix . $suffix . $letters;
+    
+    return $uniqueId;
+}git 

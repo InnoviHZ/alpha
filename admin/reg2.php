@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "../assets/include/config.php"; // Include the config file
+require_once "../assets/include/fuctions.php"; // Include the function definition
 
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
   header("location:../login.php");
@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $address = $_POST['address'];
   $phone = $_POST['phone'];
   $email = $_POST['email'];
-  $idNumber = $_POST['idNumber'];
+  $idNumber = generateUniqueId();
   $benefitType = $_POST['benefitType'];
   $photo = $_FILES["photo"]["name"];
   $opNumber = $_POST['opNumber'];
@@ -37,9 +37,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   // Handle file upload
   $targetDir = "../assets/images/beneficiaries/";
-  $fileName = basename($_FILES["photo"]["name"]);
-  $targetFilePath = $targetDir . $fileName;
-  $fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION);
+  $fileType = pathinfo($_FILES["photo"]["name"], PATHINFO_EXTENSION);
+  $newFileName = $idNumber . '.' . $fileType; // Rename the file using the unique ID
+  $targetFilePath = $targetDir . $newFileName;
 
   // Allow certain file formats
   $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
@@ -363,10 +363,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                       <label for="email">Email</label>
                       <input type="email" class="form-control" id="email" name="email" required>
                     </div>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                       <label for="idNumber">ID Number</label>
                       <input type="text" class="form-control" id="idNumber" name="idNumber" required>
-                    </div>
+                    </div> -->
                     <div class="form-group">
                       <label for="benefitType">Benefit Type</label>
                       <select class="form-control" id="benefitType" name="benefitType" required>
