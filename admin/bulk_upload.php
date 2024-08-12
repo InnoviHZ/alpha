@@ -2,6 +2,9 @@
 session_start();
 require_once "../assets/include/config.php";
 require_once "../assets/include/fuctions.php";
+require 'vendor/autoload.php'; // Add this line to include Composer autoloader
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location:../login.php");
@@ -13,6 +16,9 @@ $email = $_SESSION["email"];
 $name = $_SESSION["name"];
 $type = $_SESSION["type"];
 $picture = $_SESSION["picture"];
+
+// Get the database connection
+$mysqli = Config::getInstance()->getConnection();
 
 // Handle file upload
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["bulkUploadFile"])) {
@@ -31,15 +37,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["bulkUploadFile"])) {
     if ($uploadOk == 1) {
         if (move_uploaded_file($_FILES["bulkUploadFile"]["tmp_name"], $targetFile)) {
             echo "<script>alert('The file has been uploaded successfully.');</script>";
-            // Here you would add code to process the uploaded Excel file
-            // and insert the data into your database
+
+            // Process the uploaded Excel file
+            $spreadsheet = IOFactory::load($targetFile);
+            $worksheet = $spreadsheet->getActiveSheet();
+            $highestRow = $worksheet->getHighestRow();
+
+            // Prepare the SQL statement
+            $sql = "INSERT INTO _PDUsers (full_name, yod, full_name_b, dob, gender, lga, ward, address, phone, email, id_number, benefit_type, photo, op_number, reg_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $mysqli->prepare($sql);
+
+            // Loop through the rows and insert data
+            for ($row = 2; $row <= $highestRow; $row++) { // Assuming first row is header
+                $fullName = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
+                $yod = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
+                $fullNameB = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
+                $dob = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
+                $gender = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
+                $lga = $worksheet->getCellByColumnAndRow(6, $row)->getValue();
+                $ward = $worksheet->getCellByColumnAndRow(7, $row)->getValue();
+                $address = $worksheet->getCellByColumnAndRow(8, $row)->getValue();
+                $phone = $worksheet->getCellByColumnAndRow(9, $row)->getValue();
+                $email = $worksheet->getCellByColumnAndRow(10, $row)->getValue();
+                $idNumber = generateUniqueId(); // Assuming this function exists
+                $benefitType = $worksheet->getCellByColumnAndRow(11, $row)->getValue();
+                $photo = "default.jpg"; // You might want to handle this differently
+                $opNumber = $worksheet->getCellByColumnAndRow(12, $row)->getValue();
+                $reg_by = $_SESSION['name'];
+
+                $stmt->bind_param("sssssssssssssss", $fullName, $yod, $fullNameB, $dob, $gender, $lga, $ward, $address, $phone, $email, $idNumber, $benefitType, $photo, $opNumber, $reg_by);
+                $stmt->execute();
+            }
+
+            $stmt->close();
+            echo "<script>alert('Data has been successfully inserted into the database.');</script>";
         } else {
             echo "<script>alert('Sorry, there was an error uploading your file.');</script>";
         }
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
