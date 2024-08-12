@@ -100,30 +100,41 @@ $picture = $_SESSION["picture"];
               </a>
             </li>
             <?php if (hasPermission('Super')): ?>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-users-cog"></i>
-                <p>Manage Admins</p>
-              </a>
-            </li>
+              <li class="nav-item">
+                <a href="admin.php" class="nav-link">
+                  <form action="" method="get">
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>Manage Admins</p>
+                  </form>
+                </a>
+              </li>
             <?php endif; ?>
             <?php if (hasPermission('Admin')): ?>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-user-tie"></i>
-                <p>Manage Managers</p>
-              </a>
-            </li>
+              <li class="nav-item">
+                <a href="admin.php?man" class="nav-link">
+                  <form action="" method="get">
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>Manage Managers</p>
+                  </form>
+                </a>
+              </li>
             <?php endif; ?>
             <?php if (hasPermission('Manager')): ?>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-users"></i>
-                <p>Manage Beneficiaries</p>
-              </a>
-            </li>
+              <li class="nav-item">
+                <a href="admin.php?ben" class="nav-link">
+                  <form action="" method="get">
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>Manage Beneficiaries</p>
+                  </form>
+                </a>
+              </li>
             <?php endif; ?>
             <li class="nav-item">
+              <a href="./bulk_upload.php" class="nav-link">
+                <i class="nav-icon fas fa-heart"></i>
+                <p>Bulk Upload</p>
+              </a>
+            </li><li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-heart"></i>
                 <p>Donations</p>
@@ -149,12 +160,12 @@ $picture = $_SESSION["picture"];
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0">Dashboard</h1>
+              <h1 class="m-0"><a href="admi.php">Dashboard</a></h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard</li>
+                <li class="breadcrumb-item active"><a href="admi.php">Dashboard</a></li>
               </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->
@@ -167,49 +178,49 @@ $picture = $_SESSION["picture"];
         <div class="container-fluid">
           <div class="row">
             <?php if (hasPermission('Manager')): ?>
-            <div class="col-lg-3 col-6">
-              <!-- small box -->
-              <div class="small-box bg-info">
-                <div class="inner">
-                  <h3>150</h3>
-                  <p>New Beneficiaries</p>
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-info">
+                  <div class="inner">
+                    <h3>150</h3>
+                    <p>New Beneficiaries</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fas fa-user-plus"></i>
+                  </div>
+                  <a href="./reg2.php" class="small-box-footer">Add More <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
-                <div class="icon">
-                  <i class="fas fa-user-plus"></i>
-                </div>
-                <a href="./reg2.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
-            </div>
             <?php endif; ?>
             <?php if (hasPermission('Admin')): ?>
-            <div class="col-lg-3 col-6">
-              <!-- small box -->
-              <div class="small-box bg-success">
-                <div class="inner">
-                  <h3>30</h3>
-                  <p>Active Managers</p>
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-success">
+                  <div class="inner">
+                    <h3>30</h3>
+                    <p>Active Managers</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fas fa-user-tie"></i>
+                  </div>
+                  <a href="reg_managers.php" class="small-box-footer">Add More <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
-                <div class="icon">
-                  <i class="fas fa-user-tie"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
-            </div>
             <?php endif; ?>
             <?php if (hasPermission('Super')): ?>
-            <div class="col-lg-3 col-6">
-              <!-- small box -->
-              <div class="small-box bg-warning">
-                <div class="inner">
-                  <h3>10</h3>
-                  <p>Active Admins</p>
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-warning">
+                  <div class="inner">
+                    <h3>10</h3>
+                    <p>Active Admins</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fas fa-users-cog"></i>
+                  </div>
+                  <a href="reg_admin.php" class="small-box-footer">Add More <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
-                <div class="icon">
-                  <i class="fas fa-users-cog"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
-            </div>
             <?php endif; ?>
             <div class="col-lg-3 col-6">
               <!-- small box -->
@@ -244,9 +255,23 @@ $picture = $_SESSION["picture"];
                 <!-- /.card-header -->
                 <div class="card-body">
                   <?php
-                  if (hasPermission('Super')) displayAdminTable();
-                  elseif (hasPermission('Admin')) displayManagerTable();
-                  else displayBeneficiaryTable();
+                  if (hasPermission('Super')) {
+                    if (isset($_GET['ben'])) {
+                      displayBeneficiaryTable();
+                    } elseif (isset($_GET['man'])) {
+                      displayManagerTable();
+                    } else {
+                      displayAdminTable();
+                    }
+                  } elseif (hasPermission('Admin')) {
+                    if (isset($_GET['ben'])) {
+                      displayBeneficiaryTable();
+                    } else {
+                      displayManagerTable();
+                    }
+                  } else {
+                    displayBeneficiaryTable();
+                  }
                   ?>
                 </div>
                 <!-- /.card-body -->

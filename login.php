@@ -20,7 +20,7 @@ class User {
 
         if ($result->num_rows == 1) {
             $user = $result->fetch_assoc();
-            if ($password === $user['password']) {
+            if (password_verify($password, $user['password'])) {
                 $_SESSION["loggedin"] = true;
                 $_SESSION["id"] = $user['id'];
                 $_SESSION["email"] = $user['email'];
