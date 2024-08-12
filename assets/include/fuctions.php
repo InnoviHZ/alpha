@@ -31,7 +31,7 @@ function displayBeneficiaryTable()
             $counter = 1;
             while ($row = $result->fetch_assoc()) {
                 echo '<tr>';
-                echo '<td>' . $counter ;
+                echo '<td>' . $counter;
 
                 echo '<td>' . htmlspecialchars($row['full_name']) . '</td>';
                 echo '<td>' . htmlspecialchars($row['address']) . '</td>';
@@ -43,7 +43,8 @@ function displayBeneficiaryTable()
                 echo '<form method="POST" action="delete_user.php" style="display:inline-block;">';
                 echo '<input type="hidden" name="user_id" value="' . $row['id'] . '">';
                 echo '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this user?\')">Delete</button>';
-                echo '</form>';                echo '</td>';
+                echo '</form>';
+                echo '</td>';
                 echo '</tr>';
                 $counter++;
             }
@@ -90,7 +91,7 @@ function displayManagerTable()
             $counter = 1;
             while ($row = $result->fetch_assoc()) {
                 echo '<tr>';
-                echo '<td>' . $counter ;
+                echo '<td>' . $counter;
 
                 echo '<td>' . htmlspecialchars($row['name']) . '</td>';
                 echo '<td>' . htmlspecialchars($row['address']) . '</td>';
@@ -104,7 +105,8 @@ function displayManagerTable()
                 echo '<form method="POST" action="delete_user.php" style="display:inline-block;">';
                 echo '<input type="hidden" name="user_id" value="' . $row['id'] . '">';
                 echo '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this user?\')">Delete</button>';
-                echo '</form>';                echo '</td>';
+                echo '</form>';
+                echo '</td>';
                 echo '</tr>';
                 $counter++;
             }
@@ -151,7 +153,7 @@ function displayAdminTable()
             $counter = 1;
             while ($row = $result->fetch_assoc()) {
                 echo '<tr>';
-                echo '<td>' . $counter ;
+                echo '<td>' . $counter;
 
                 echo '<td>' . htmlspecialchars($row['name']) . '</td>';
                 echo '<td>' . htmlspecialchars($row['address']) . '</td>';
@@ -165,7 +167,8 @@ function displayAdminTable()
                 echo '<form method="POST" action="delete_user.php" style="display:inline-block;">';
                 echo '<input type="hidden" name="user_id" value="' . $row['id'] . '">';
                 echo '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this user?\')">Delete</button>';
-                echo '</form>';                echo '</td>';
+                echo '</form>';
+                echo '</td>';
                 echo '</tr>';
                 $counter++;
             }
@@ -182,28 +185,36 @@ function displayAdminTable()
 }
 
 // Function to check if the current user has the required permission
-function hasPermission($requiredRole) {
+function hasPermission($requiredRole)
+{
     $roleHierarchy = ['Super' => 3, 'Admin' => 2, 'Manager' => 1];
     return $roleHierarchy[$_SESSION['type']] >= $roleHierarchy[$requiredRole];
 }
 
 
-function generateUniqueId() {
+function generateUniqueId()
+{
+    // Get the current year
+    $currentYear = date('Y');
+
+    // Extract the last two digits of the year
+    $lastTwoDigits = substr($currentYear, -2);
+
     // Define the prefix
-    $prefix = 'SUD-24-';
-    
+    $prefix = $lastTwoDigits;
+
     // Generate a random 6-byte value and convert it to a hexadecimal string
     // This ensures the suffix part is 9 characters or less
-    $randomBytes = bin2hex(random_bytes(6));
-    
+    $randomNumber = sprintf('%08d', mt_rand(0, 99999999)); // 10-digit random number
+
     // Use only the first 7 characters of the random bytes to leave space for 2 random letters
-    $suffix = substr($randomBytes, 0, 7);
-    
+    $suffix = $randomNumber;
+
     // Generate two random letters
     $letters = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 2);
-    
+
     // Combine the prefix, suffix, and letters to form the unique ID
     $uniqueId = $prefix . $suffix . $letters;
-    
+
     return $uniqueId;
-}git 
+}
