@@ -126,7 +126,7 @@ function displayAdminTable()
     $mysqli = Config::getInstance()->getConnection();
 
     // Define the SQL query to fetch user details
-    $sql = "SELECT * FROM _PDAdmin  WHERE type = 'Manager'";
+    $sql = "SELECT * FROM _PDAdmin  WHERE type = 'Admin'";
 
     // Execute the query
     if ($result = $mysqli->query($sql)) {

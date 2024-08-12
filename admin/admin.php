@@ -235,8 +235,8 @@ $picture = $_SESSION["picture"];
                   <h3 class="card-title">
                     <i class="fas fa-users mr-1"></i>
                     <?php
-                    if (hasPermission('Super')) echo "Admin and Manager Details";
-                    elseif (hasPermission('Admin')) echo "Manager and Beneficiary Details";
+                    if (hasPermission('Super')) echo "Admin Details";
+                    elseif (hasPermission('Admin')) echo "Manager Details";
                     else echo "Beneficiary Details";
                     ?>
                   </h3>
@@ -304,7 +304,7 @@ $picture = $_SESSION["picture"];
         "responsive": true,
         "lengthChange": true,
         "autoWidth": false,
-        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        "buttons": ["excel", "pdf", "print"]
       }).buttons().container().appendTo('#userTable_wrapper .col-md-6:eq(0)');
     });
   </script>
