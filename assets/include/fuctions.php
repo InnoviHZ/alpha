@@ -39,6 +39,7 @@ function displayBeneficiaryTable()
                 echo '<td>' . htmlspecialchars($row['reg_by']) . '</td>';
                 echo '<td>';
                 echo '<a href="view_user.php?id=' . $row['id'] . '" class="btn btn-primary btn-sm">View</a> ';
+                echo '<a href="add_ben.php?id=' . $row['id'] . '" class="btn btn-success btn-sm">Add New</a> ';
                 echo '<a href="update_user.php?id=' . $row['id'] . '" class="btn btn-warning btn-sm">Update</a> ';
                 echo '<form method="POST" action="delete_user.php" style="display:inline-block;">';
                 echo '<input type="hidden" name="user_id" value="' . $row['id'] . '">';
