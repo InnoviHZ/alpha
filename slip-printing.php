@@ -174,22 +174,70 @@
                 jsPDF
             } = window.jspdf;
 
-            const doc = new jsPDF();
+            // Create new document in landscape A5 size
+            const doc = new jsPDF({
+                orientation: 'landscape',
+                unit: 'mm',
+                format: 'a5'
+            });
 
-            // Add content to the PDF
-            doc.setFontSize(22);
-            doc.text('Orphan Care Slip', 105, 20, null, null, 'center');
+            // Set document properties
+            doc.setProperties({
+                title: 'XYZORPHANS ORGANIZATION AND CENTER Distribution Card',
+                subject: 'Orphan Distribution Card',
+                author: 'XYZORPHANS ORGANIZATION AND CENTER',
+                keywords: 'orphan, distribution, card',
+                creator: 'XYZORPHANS ORGANIZATION AND CENTER'
+            });
 
-            doc.setFontSize(12);
-            doc.text(`Orphan ID / Guardian's Phone: ${orphanId}`, 20, 40);
-            doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 50);
+            // Add border to the page
+            doc.setDrawColor(0);
+            doc.setLineWidth(0.5);
+            doc.rect(5, 5, 200, 138);
 
+            // Add header
+            doc.setFontSize(16);
+            doc.setFont("helvetica", "bold");
+            doc.text('XYZORPHANS ORGANIZATION AND CENTER', 105, 15, null, null, 'center');
+
+            doc.setFontSize(8);
+            doc.setFont("helvetica", "normal");
+            doc.text('No.11 Kasuwar Shanu GRA, Bauchi Azare Nigeria 0803872992', 105, 22, null, null, 'center');
+
+            // Add title
+            doc.setFontSize(14);
+            doc.setFont("helvetica", "bold");
+            doc.text('DISTRIBUTIONS CARD', 105, 30, null, null, 'center');
+
+            // Add content
             doc.setFontSize(10);
-            doc.text('This slip confirms the registration of the orphan with the', 20, 70);
-            doc.text('provided ID/Phone number in our care program.', 20, 80);
+            doc.setFont("helvetica", "normal");
+
+            const contentStart = 40;
+            const lineHeight = 8;
+
+            doc.text(`Id. Number: ${orphanId}`, 20, contentStart);
+            doc.text(`Name: Jafar Muhammad Tanko`, 20, contentStart + lineHeight);
+            doc.text(`Address: Kasuwar Shanu Azare`, 20, contentStart + 2 * lineHeight);
+            doc.text(`Number of Orphans: 8`, 20, contentStart + 3 * lineHeight);
+            doc.text(`Donation Requested: Food`, 20, contentStart + 4 * lineHeight);
+            doc.text(`Date and Time of Collection: 10-09-2029 (11:00am)`, 20, contentStart + 5 * lineHeight);
+            doc.text(`Collection Point: Azare`, 20, contentStart + 6 * lineHeight);
+            doc.text(`Collection Agent: Mudi Salga`, 20, contentStart + 7 * lineHeight);
+
+            // Add placeholders for profile picture and QR code
+            doc.rect(10, 95, 30, 30); // Profile picture placeholder
+            doc.rect(165, 95, 30, 30); // QR code placeholder
+
+            // Add footer
+            doc.setFillColor(0);
+            doc.rect(5, 130, 200, 10, 'F');
+            doc.setTextColor(255);
+            doc.setFontSize(8);
+            doc.text('www.xyzorphans.com.ng', 105, 136, null, null, 'center');
 
             // Save the PDF
-            doc.save('OrphanCareSlip.pdf');
+            doc.save('OrphanDistributionCard.pdf');
         });
     </script>
     <!-- Bootstrap JS -->
