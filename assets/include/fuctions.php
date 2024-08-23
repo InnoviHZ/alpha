@@ -39,7 +39,7 @@ function displayBeneficiaryTable()
                 echo '<td>' . htmlspecialchars($row['reg_by']) . '</td>';
                 echo '<td>';
                 echo '<a href="view_user.php?id=' . $row['id'] . '" class="btn btn-primary btn-sm">View</a> ';
-                echo '<a href="add_ben.php?id=' . $row['id'] . '" class="btn btn-success btn-sm">Add New</a> ';
+                // echo '<a href="add_ben.php?id=' . $row['id'] . '" class="btn btn-success btn-sm">Add New</a> ';
                 echo '<a href="update_user.php?id=' . $row['id'] . '" class="btn btn-warning btn-sm">Update</a> ';
                 echo '<form method="POST" action="delete_user.php" style="display:inline-block;">';
                 echo '<input type="hidden" name="user_id" value="' . $row['id'] . '">';
@@ -218,4 +218,85 @@ function generateUniqueId()
     $uniqueId = $prefix . $suffix . $letters;
 
     return $uniqueId;
+}
+function displayOutletTable($id)
+{
+    // Get the database connection
+    $mysqli = Config::getInstance()->getConnection();
+
+    // Define the SQL query to fetch user details
+    $sql = "SELECT * FROM _PDOutlet  WHERE under = $id";
+
+    // Execute the query
+    if ($result = $mysqli->query($sql)) {
+        if ($result->num_rows > 0) {
+            // Start generating the HTML table
+            echo '<table id="userTable" class="table table-bordered table-striped">';
+            echo '<thead>';
+            echo '<tr>';
+            echo '<th>#</th>';
+            echo '<th>Name</th>';
+            echo '<th>Age</th>';
+            echo '<th>Gender</th>';
+            echo '<th>Actions</th>';
+            echo '</tr>';
+            echo '</thead>';
+            echo '<tbody>';
+
+            // Fetch and display each row of user data
+            $counter = 1;
+            while ($row = $result->fetch_assoc()) {
+                echo '<tr>';
+                echo '<td>' . $counter;
+
+                echo '<td>' . htmlspecialchars($row['full_name']) . '</td>';
+                echo '<td>' . htmlspecialchars($row['age']) . '</td>';
+                echo '<td>' . htmlspecialchars($row['gender']) . '</td>';
+                echo '<td>';
+                echo '<a href="update_outlet.php?id=' . $row['id'] . '" class="btn btn-warning btn-sm">Update</a> ';
+                echo '<form method="POST" action="delete_outlet.php" style="display:inline-block;">';
+                echo '<input type="hidden" name="user_id" value="' . $row['id'] . '">';
+                echo '<input type="hidden" name="id" value="' . $id . '">';
+                echo '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this user?\')">Delete</button>';
+                echo '</form>';
+                echo '</td>';
+                echo '</tr>';
+                $counter++;
+            }
+            echo '</tbody>';
+            echo '</table>';
+        } else {
+            echo '<p>No users found.</p>';
+        }
+        // Free result set
+        $result->free();
+    } else {
+        echo 'Error: ' . $mysqli->error;
+    }
+}
+// delete users function
+function deleteOutlet($userId)
+{
+    // Get the database connection
+    $mysqli = Config::getInstance()->getConnection();
+
+    // Prepare the DELETE statement
+    $sql = "DELETE FROM _PDOutlet WHERE id = ?";
+
+    if ($stmt = $mysqli->prepare($sql)) {
+        // Bind the user ID to the statement
+        $stmt->bind_param("i", $userId);
+
+        // Execute the statement
+        if ($stmt->execute()) {
+            // Redirect back to the page with the user table
+            header("Location: ../admin/view_user.php"); // Change this to the correct page where the table is displayed
+            exit;
+        } else {
+            echo "Error: Could not execute the delete operation.";
+        }
+        $stmt->close();
+    } else {
+        echo "Error: Could not prepare the delete statement.";
+    }
 }

@@ -2,7 +2,7 @@
 session_start();
 require_once "../assets/include/config.php";
 require_once "../assets/include/fuctions.php";
-
+// Function to check if user has permission
 if (!isset($_SESSION["loggedin"]) ||  $_SESSION["loggedin"] !== true) {
   header("location:../login.php");
   exit;
@@ -14,6 +14,22 @@ $name = $_SESSION["name"];
 $type = $_SESSION["type"];
 $picture = $_SESSION["picture"];
 
+// fetch adimn detail form databes
+$mysqli = Config::getInstance()->getConnection();
+$stmt = $mysqli->prepare("SELECT * FROM _PDAdmin WHERE id =?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$admin_details = $result->fetch_assoc();
+// saving details as variables
+$admin_id = $admin_details['id'];
+$admin_name = $admin_details['name'];
+$admin_email = $admin_details['email'];
+$admin_phone = $admin_details['phone'];
+$admin_address = $admin_details['address'];
+$admin_lga = $admin_details['lga'];
+$admin_reg_by = $admin_details['reg_by'];
+// $admin_pa = $admin_details['password'];
 
 ?>
 
@@ -45,9 +61,6 @@ $picture = $_SESSION["picture"];
         <li class="nav-item d-none d-sm-inline-block">
           <a href="admin.php" class="nav-link">Home</a>
         </li>
-        <!-- <li class="nav-item d-none d-sm-inline-block">
-    <a href="#" class="nav-link">Contact</a>
-  </li> -->
       </ul>
 
       <!-- Right navbar links -->
@@ -58,8 +71,8 @@ $picture = $_SESSION["picture"];
             <i class="fas fa-user"></i>
           </a>
           <div class="dropdown-menu dropdown-menu-right">
-            <a href="profile.php" class="dropdown-item">
-              <i class="fas fa-user-circle mr-2"></i> Profile
+            <a href="#" class="dropdown-item" data-toggle="modal" data-target="#profileModal">
+              <i class="fas fa-user"></i> Profile
             </a>
             <div class="dropdown-divider"></div>
             <a href="logout.php" class="dropdown-item">
@@ -69,7 +82,6 @@ $picture = $_SESSION["picture"];
         </li>
       </ul>
     </nav>
-
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
@@ -93,18 +105,6 @@ $picture = $_SESSION["picture"];
           </div>
         </div>
 
-        <!-- SidebarSearch Form -->
-        <!-- <div class="form-inline">
-          <div class="input-group" data-widget="sidebar-search">
-            <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-            <div class="input-group-append">
-              <button class="btn btn-sidebar">
-                <i class="fas fa-search fa-fw"></i>
-              </button>
-            </div>
-          </div>
-        </div> -->
-
         <!-- Sidebar Menu -->
         <nav class="mt-2">
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
@@ -114,10 +114,40 @@ $picture = $_SESSION["picture"];
                 <p>Dashboard</p>
               </a>
             </li>
+            <?php if (hasPermission('Super')): ?>
+              <li class="nav-item">
+                <a href="admin.php" class="nav-link">
+                  <form action="" method="get">
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>Manage Admins</p>
+                  </form>
+                </a>
+              </li>
+            <?php endif; ?>
+            <?php if (hasPermission('Admin')): ?>
+              <li class="nav-item">
+                <a href="admin.php?man" class="nav-link">
+                  <form action="" method="get">
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>Manage Managers</p>
+                  </form>
+                </a>
+              </li>
+            <?php endif; ?>
+            <?php if (hasPermission('Manager')): ?>
+              <li class="nav-item">
+                <a href="admin.php?ben" class="nav-link">
+                  <form action="" method="get">
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>Manage Beneficiaries</p>
+                  </form>
+                </a>
+              </li>
+            <?php endif; ?>
             <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-users"></i>
-                <p>Users</p>
+              <a href="./bulk_upload.php" class="nav-link">
+                <i class="nav-icon fas fa-heart"></i>
+                <p>Bulk Upload</p>
               </a>
             </li>
             <li class="nav-item">
@@ -146,12 +176,12 @@ $picture = $_SESSION["picture"];
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0">Dashboard</h1>
+              <h1 class="m-0"><a href="admi.php">Dashboard</a></h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard</li>
+                <li class="breadcrumb-item active"><a href="admi.php">Dashboard</a></li>
               </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->
@@ -163,23 +193,54 @@ $picture = $_SESSION["picture"];
       <section class="content">
         <div class="container-fluid">
           <div class="row">
-            <div class="col-lg-3 col-6">
-              <!-- small box -->
-              <div class="small-box bg-info">
-                <div class="inner">
-                  <h3>150</h3>
-                  <p>New Users</p>
+            <?php if (hasPermission('Manager')): ?>
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-info">
+                  <div class="inner">
+                    <h3>150</h3>
+                    <p>New Beneficiaries</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fas fa-user-plus"></i>
+                  </div>
+                  <a href="./reg2.php" class="small-box-footer">Add More <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
-                <div class="icon">
-                  <i class="fas fa-user-plus"></i>
-                </div>
-                <a href="./reg2.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
-            </div>
-            <!-- ./col -->
+            <?php endif; ?>
+            <?php if (hasPermission('Admin')): ?>
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-success">
+                  <div class="inner">
+                    <h3>30</h3>
+                    <p>Active Managers</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fas fa-user-tie"></i>
+                  </div>
+                  <a href="reg_managers.php" class="small-box-footer">Add More <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+              </div>
+            <?php endif; ?>
+            <?php if (hasPermission('Super')): ?>
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-warning">
+                  <div class="inner">
+                    <h3>10</h3>
+                    <p>Active Admins</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fas fa-users-cog"></i>
+                  </div>
+                  <a href="reg_admin.php" class="small-box-footer">Add More <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+              </div>
+            <?php endif; ?>
             <div class="col-lg-3 col-6">
               <!-- small box -->
-              <div class="small-box bg-success">
+              <div class="small-box bg-danger">
                 <div class="inner">
                   <h3>$53,000</h3>
                   <p>Total Donations</p>
@@ -190,35 +251,6 @@ $picture = $_SESSION["picture"];
                 <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
-            <!-- ./col -->
-            <div class="col-lg-3 col-6">
-              <!-- small box -->
-              <div class="small-box bg-warning">
-                <div class="inner">
-                  <h3>44</h3>
-                  <p>Upcoming Events</p>
-                </div>
-                <div class="icon">
-                  <i class="fas fa-calendar-alt"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-              </div>
-            </div>
-            <!-- ./col -->
-            <div class="col-lg-3 col-6">
-              <!-- small box -->
-              <div class="small-box bg-danger">
-                <div class="inner">
-                  <h3>65</h3>
-                  <p>Active Volunteers</p>
-                </div>
-                <div class="icon">
-                  <i class="fas fa-hands-helping"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-              </div>
-            </div>
-            <!-- ./col -->
           </div>
           <!-- /.row -->
           <!-- Info boxes -->
@@ -229,20 +261,34 @@ $picture = $_SESSION["picture"];
                 <div class="card-header">
                   <h3 class="card-title">
                     <i class="fas fa-users mr-1"></i>
-                    Beneficiary Details
+                    <?php
+                    if (hasPermission('Super')) echo "Admin Details";
+                    elseif (hasPermission('Admin')) echo "Manager Details";
+                    else echo "Beneficiary Details";
+                    ?>
                   </h3>
-                  <div class="card-tools">
-                    <!-- <div class="input-group input-group-sm" style="width: 150px;">
-                    <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
-                    <div class="input-group-append">
-                      <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
-                    </div>
-                  </div> -->
-                  </div>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                  <?php displayUsersTable(); ?>
+                  <?php
+                  if (hasPermission('Super')) {
+                    if (isset($_GET['ben'])) {
+                      displayBeneficiaryTable();
+                    } elseif (isset($_GET['man'])) {
+                      displayManagerTable();
+                    } else {
+                      displayAdminTable();
+                    }
+                  } elseif (hasPermission('Admin')) {
+                    if (isset($_GET['ben'])) {
+                      displayBeneficiaryTable();
+                    } else {
+                      displayManagerTable();
+                    }
+                  } else {
+                    displayBeneficiaryTable();
+                  }
+                  ?>
                 </div>
                 <!-- /.card-body -->
               </div>
@@ -272,6 +318,62 @@ $picture = $_SESSION["picture"];
     <!-- /.control-sidebar -->
   </div>
   <!-- ./wrapper -->
+  <!-- Profile Modal -->
+  <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="profileModalLabel">Admin Profile</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Admin Profile Photo -->
+          <div class="form-group text-center">
+            <img src="../assets/images/admin/<?php echo $picture; ?>" alt="Admin Photo" class="img-thumbnail" id="adminPhoto" style="width: 150px; height: 150px;">
+            <input type="file" class="form-control-file mt-2" id="adminPhotoUpload" name="picture">
+          </div>
+
+          <!-- Admin details form -->
+          <form id="adminProfileForm">
+            <div class="form-group">
+              <label for="adminName">Name</label>
+              <input type="text" class="form-control" id="adminName" name="name" value="<?php echo $admin_name ?>">
+            </div>
+            <div class="form-group">
+              <label for="adminEmail">Email</label>
+              <input type="email" class="form-control" id="adminEmail" name="email" value="<?php echo $admin_email ?>">
+            </div>
+            <!-- <div class="form-group">
+              <label for="adminPassword">Password</label>
+              <input type="text" class="form-control" id="adminPassword" name="password" value="<?php echo $admin_pa; ?>">
+            </div> -->
+            <div class="form-group">
+              <label for="adminPhone">Phone Number</label>
+              <input type="text" class="form-control" id="adminPhone" name="phone" value="<?php echo $admin_phone; ?>">
+            </div>
+            <div class="form-group">
+              <label for="adminAddress">Address</label>
+              <input type="text" class="form-control" id="adminAddress" name="address" value="<?php echo $admin_address; ?>">
+            </div>
+            <div class="form-group">
+              <label for="adminRegBy">Registered By</label>
+              <input type="text" class="form-control" id="adminRegBy" name="reg_by" value="<?php echo $admin_reg_by; ?>">
+            </div>
+            <div class="form-group">
+              <label for="adminLGA">LGA</label>
+              <input type="text" class="form-control" id="adminLGA" name="lga" value="<?php echo $admin_lga; ?>">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="saveProfileChanges">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- jQuery -->
   <script src="plugins/jquery/jquery.min.js"></script>
@@ -292,8 +394,6 @@ $picture = $_SESSION["picture"];
   <script src="plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
   <!-- AdminLTE App -->
   <script src="dist/js/adminlte.min.js"></script>
-  <!-- AdminLTE for demo purposes -->
-  <!-- <script src="dist/js/demo.js"></script> -->
   <!-- Page specific script -->
   <script>
     $(function() {
@@ -301,10 +401,39 @@ $picture = $_SESSION["picture"];
         "responsive": true,
         "lengthChange": true,
         "autoWidth": false,
-        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        "buttons": ["excel", "pdf", "print"]
       }).buttons().container().appendTo('#userTable_wrapper .col-md-6:eq(0)');
     });
   </script>
+  <script>
+    $(document).ready(function() {
+      $('#saveProfileChanges').on('click', function() {
+        var formData = new FormData($('#adminProfileForm')[0]);
+        if ($('#adminPhotoUpload')[0].files[0]) {
+          formData.append('picture', $('#adminPhotoUpload')[0].files[0]);
+        }
+
+        $.ajax({
+          url: 'update_admin_details.php', // Endpoint to handle the update
+          method: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+            alert('Profile updated successfully!');
+            $('#profileModal').modal('hide');
+            // Optionally, update the photo on the page
+            $('#adminPhoto').attr('src', URL.createObjectURL($('#adminPhotoUpload')[0].files[0]));
+          },
+          error: function(error) {
+            console.error('Error updating profile:', error);
+          }
+        });
+      });
+    });
+  </script>
+
+
 </body>
 
 </html>

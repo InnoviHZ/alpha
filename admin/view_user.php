@@ -34,7 +34,7 @@ $picture = $_SESSION["picture"];
 <body class="hold-transition sidebar-mini">
 
   <div class="wrapper">
-    <!-- Navbar and Sidebar code here (same as before) -->
+    <!-- Content Wrapper. Contains page content -->
     <nav class="main-header navbar navbar-expand navbar-white navbar-light">
       <!-- Left navbar links -->
       <ul class="navbar-nav">
@@ -127,7 +127,6 @@ $picture = $_SESSION["picture"];
       </div>
       <!-- /.sidebar -->
     </aside>
-    <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
       <!-- Content Header (Page header) -->
       <section class="content-header">
@@ -170,7 +169,7 @@ $picture = $_SESSION["picture"];
                     $mysqli = Config::getInstance()->getConnection();
 
                     // Prepare the SQL statement to fetch user details
-                    $sql = "SELECT full_name, yod, full_name_b, dob, gender, lga, ward, address, phone, email, id_number, benefit_type, photo, op_number, reg_by FROM _PDUsers WHERE id = ?";
+                    $sql = "SELECT full_name, yod, full_name_b, dob, gender, lga, ward, address, phone, email, op_number,id_number, benefit_type, photo, op_number, reg_by FROM _PDUsers WHERE id = ?";
 
                     if ($stmt = $mysqli->prepare($sql)) {
                       // Bind the user ID to the statement
@@ -180,34 +179,32 @@ $picture = $_SESSION["picture"];
                       $stmt->execute();
 
                       // Bind the result to variables
-                      $stmt->bind_result($fullName, $yod, $fullNameB, $dob, $gender, $lga, $ward, $address, $phone, $email, $idNumber, $benefitType, $photo, $opNumber, $registeredBy);
+                      $stmt->bind_result($fullName, $yod, $fullNameB, $dob, $gender, $lga, $ward, $address, $phone, $email, $op_number, $id_number, $benefitType, $photo, $opNumber, $registeredBy);
 
                       // Fetch the details
                       if ($stmt->fetch()) {
                         // Display user details in HTML with AdminLTE styling
-                        echo "<form id='editUserForm' method='post' action='update_user.php'>";
-                        echo "<input type='hidden' name='user_id' value='" . $userId . "'>";
                         echo "<div class='row'>";
                         echo "<div class='col-md-6'>";
-                        echo "<div class='form-group'><label>Name:</label> <input type='text' class='form-control' name='full_name' value='" . htmlspecialchars($fullName) . "'></div>";
-                        echo "<div class='form-group'><label>Year of Death:</label> <input type='date' class='form-control' name='yod' value='" . htmlspecialchars($yod) . "'></div>";
-                        echo "<div class='form-group'><label>Beneficiary Name:</label> <input type='text' class='form-control' name='full_name_b' value='" . htmlspecialchars($fullNameB) . "'></div>";
-                        echo "<div class='form-group'><label>Date of Birth:</label> <input type='date' class='form-control' name='dob' value='" . htmlspecialchars($dob) . "'></div>";
-                        echo "<div class='form-group'><label>Gender:</label> <input type='text' class='form-control' name='gender' value='" . htmlspecialchars($gender) . "'></div>";
-                        echo "<div class='form-group'><label>LGA:</label> <input type='text' class='form-control' name='lga' value='" . htmlspecialchars($lga) . "'></div>";
-                        echo "<div class='form-group'><label>Ward:</label> <input type='text' class='form-control' name='ward' value='" . htmlspecialchars($ward) . "'></div>";
-                        echo "<div class='form-group'><label>Address:</label> <input type='text' class='form-control' name='address' value='" . htmlspecialchars($address) . "'></div>";
+                        echo "<p><strong>Name:</strong> " . htmlspecialchars($fullName) . "</p>";
+                        echo "<p><strong>Year of Death:</strong> " . htmlspecialchars($yod) . "</p>";
+                        echo "<p><strong>Beneficiary Name:</strong> " . htmlspecialchars($fullNameB) . "</p>";
+                        echo "<p><strong>Date of Birth:</strong> " . htmlspecialchars($dob) . "</p>";
+                        echo "<p><strong>Gender:</strong> " . htmlspecialchars($gender) . "</p>";
+                        echo "<p><strong>LGA:</strong> " . htmlspecialchars($lga) . "</p>";
+                        echo "<p><strong>Ward:</strong> " . htmlspecialchars($ward) . "</p>";
+                        echo "<p><strong>Address:</strong> " . htmlspecialchars($address) . "</p>";
                         echo "</div>";
                         echo "<div class='col-md-6'>";
-                        echo "<div class='form-group'><label>Phone:</label> <input type='tel' class='form-control' name='phone' value='" . htmlspecialchars($phone) . "'></div>";
-                        echo "<div class='form-group'><label>Email:</label> <input type='email' class='form-control' name='email' value='" . htmlspecialchars($email) . "'></div>";
-                        echo "<div class='form-group'><label>Benefit Type:</label> <input type='text' class='form-control' name='benefit_type' value='" . htmlspecialchars($benefitType) . "'></div>";
-                        echo "<div class='form-group'><label>Operation Number:</label> <input type='text' class='form-control' name='op_number' value='" . htmlspecialchars($opNumber) . "'></div>";
-                        echo "<div class='form-group'><label>Photo:</label><br><img src='../assets/images/beneficiaries/" . htmlspecialchars($photo) . "' alt='User Photo' class='img-fluid img-thumbnail' style='max-width: 200px;'></div>";
+                        echo "<p><strong>Phone:</strong> " . htmlspecialchars($phone) . "</p>";
+                        echo "<p><strong>Email:</strong> " . htmlspecialchars($email) . "</p>";
+                        echo "<p><strong>Number of Orphans:</strong> " . htmlspecialchars($op_number) . "</p>";
+                        echo "<p><strong>Benefit Type:</strong> " . htmlspecialchars($benefitType) . "</p>";
+                        echo "<p><strong>Id Number:</strong> " . htmlspecialchars($id_number) . "</p>";
+                        echo "<p><strong>Registered By:</strong> " . htmlspecialchars($registeredBy) . "</p>";
+                        echo "<p><strong>Photo:</strong><br><img src='../assets/images/beneficiaries/" . htmlspecialchars($photo) . "' alt='User Photo' class='img-fluid img-thumbnail' style='max-width: 200px;'></p>";
                         echo "</div>";
                         echo "</div>";
-                        echo "<button type='submit' class='btn btn-primary mt-3'>Save Changes</button>";
-                        echo "</form>";
                       } else {
                         echo "<p class='text-danger'>User not found.</p>";
                       }
@@ -221,7 +218,27 @@ $picture = $_SESSION["picture"];
                     echo "<p class='text-danger'>Error: No user ID provided.</p>";
                   }
                   ?>
-                  <a href="admin.php" class="btn btn-secondary mt-3">Back to Users List</a>
+                  <a href="admin.php" class="btn btn-primary mt-3">Back to Users List</a>
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+            </div>
+            <!-- /.col -->
+            <div class="col-12">
+              <!-- User Details Card -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">
+                    <i class="fas fa-users mr-1"></i>
+                    Otlets Details
+                  </h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <?php
+                  displayOutletTable($userId);
+                  ?>
                 </div>
                 <!-- /.card-body -->
               </div>
@@ -245,11 +262,59 @@ $picture = $_SESSION["picture"];
   </div>
   <!-- ./wrapper -->
 
-  <!-- AdminLTE JS -->
-  <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1.0/dist/js/adminlte.min.js"></script>
   <!-- Bootstrap JS and dependencies -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+  <!-- DataTables & Plugins -->
+  <script src="plugins/datatables/jquery.dataTables.min.js"></script>
+  <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+  <script src="plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+  <script src="plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+  <script src="plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+  <script src="plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+  <script src="plugins/jszip/jszip.min.js"></script>
+  <script src="plugins/pdfmake/pdfmake.min.js"></script>
+  <script src="plugins/pdfmake/vfs_fonts.js"></script>
+  <script src="plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+  <script src="plugins/datatables-buttons/js/buttons.print.min.js"></script>
+  <script src="plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+  <script>
+    $(function() {
+      $("#userTable").DataTable({
+        "responsive": true,
+        "lengthChange": true,
+        "autoWidth": false,
+        "buttons": ["excel", "pdf", "print"]
+      }).buttons().container().appendTo('#userTable_wrapper .col-md-6:eq(0)');
+    });
+  </script>
+  <script>
+    $(document).ready(function() {
+      $('#saveProfileChanges').on('click', function() {
+        var formData = new FormData($('#adminProfileForm')[0]);
+        if ($('#adminPhotoUpload')[0].files[0]) {
+          formData.append('picture', $('#adminPhotoUpload')[0].files[0]);
+        }
+
+        $.ajax({
+          url: 'update_admin_details.php', // Endpoint to handle the update
+          method: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+            alert('Profile updated successfully!');
+            $('#profileModal').modal('hide');
+            // Optionally, update the photo on the page
+            $('#adminPhoto').attr('src', URL.createObjectURL($('#adminPhotoUpload')[0].files[0]));
+          },
+          error: function(error) {
+            console.error('Error updating profile:', error);
+          }
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>

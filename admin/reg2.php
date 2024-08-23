@@ -86,6 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class='modal-footer'>
                         <a href='admin.php'><button type='button' class='btn btn-primary'>Go back to Dashboard</button></a>
                         <button type='button' class='btn btn-secondary' data-dismiss='modal'>No Continue</button>
+                        <a href='add_outlet.php'><button type='button' class='btn btn-success'>Add Outlet</button></a>
                     </div>
                 </div>
             </div>

@@ -136,7 +136,7 @@ $admin_reg_by = $admin_details['reg_by'];
             <?php endif; ?>
             <?php if (hasPermission('Manager')): ?>
               <li class="nav-item">
-                <a href="admin.php?usr" class="nav-link">
+                <a href="admin.php?ben" class="nav-link">
                   <form action="" method="get">
                     <i class="nav-icon fas fa-users"></i>
                     <p>Manage Beneficiaries</p>
@@ -272,7 +272,7 @@ $admin_reg_by = $admin_details['reg_by'];
                 <div class="card-body">
                   <?php
                   if (hasPermission('Super')) {
-                    if (isset($_GET['usr'])) {
+                    if (isset($_GET['ben'])) {
                       displayBeneficiaryTable();
                     } elseif (isset($_GET['man'])) {
                       displayManagerTable();
@@ -280,7 +280,7 @@ $admin_reg_by = $admin_details['reg_by'];
                       displayAdminTable();
                     }
                   } elseif (hasPermission('Admin')) {
-                    if (isset($_GET['usr'])) {
+                    if (isset($_GET['ben'])) {
                       displayBeneficiaryTable();
                     } else {
                       displayManagerTable();

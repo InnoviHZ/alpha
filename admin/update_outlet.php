@@ -18,7 +18,7 @@ $picture = $_SESSION["picture"];
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $full_name = $_POST['full_name'];
   $age = $_POST['age'];
-  $under = $_GET['id'];
+  $under = $id;
   $gender = $_POST['gender'];
 
   // Handle photo upload
@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
     $target_dir = "../assets/images/beneficiaries";
     $file_type = pathinfo($_FILES["photo"]["name"], PATHINFO_EXTENSION);
-    $new_file_name = uniqid() . '.' . $file_type; // Generate a unique filename
+    $new_file_name = $full_name . '.' . $file_type; // Generate a unique filename
     $target_file_path = $target_dir . $new_file_name;
 
     $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
@@ -37,8 +37,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
   }
 
-  // Insert beneficiary data into the database
-  $sql = "INSERT INTO _PDBen (full_name, age, `under`, gender, photo) VALUES (?, ?, ?, ?, ?)";
+  // Insert Outlet data into the database
+  $sql = "INSERT INTO _PDOutlet (full_name, age, `under`, gender, photo) VALUES (?, ?, ?, ?, ?)";
   if ($stmt = $mysqli->prepare($sql)) {
     $stmt->bind_param("sssss", $full_name, $age, $under, $gender, $photo);
 
@@ -83,7 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
       echo "<script>
               $(document).ready(function() {
-                  toastr.error('Error registering beneficiary. Please try again.');
+                  toastr.error('Error registering Outlet. Please try again.');
               });
             </script>";
     }
@@ -99,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Beneficiary Registration</title>
+  <title>Outlet Registration</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <!-- Include CSS -->
   <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
@@ -222,12 +222,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0">Beneficiary Registration</h1>
+              <h1 class="m-0">Outlet Registration</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Beneficiary Registration</li>
+                <li class="breadcrumb-item active">Outlet Registration</li>
               </ol>
             </div>
           </div>
@@ -241,18 +241,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="col-md-6 m-auto">
               <div class="card">
                 <div class="card-header">
-                  <h3 class="card-title">Register New Beneficiary</h3>
+                  <h3 class="card-title">Register New Outlet</h3>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                  <?php
-                  if (isset($successMessage)) {
-                    echo "<div class='alert alert-success'>" . $successMessage . "</div>";
-                  }
-                  if (isset($errorMessage)) {
-                    echo "<div class='alert alert-danger'>" . $errorMessage . "</div>";
-                  }
-                  ?>
                   <form action="" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                       <label for="full_name">Full Name</label>
@@ -260,7 +252,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                     <div class="form-group">
                       <label for="age">Age</label>
-                      <input type="text" class="form-control" id="age" name="age" required>
+                      <input type="number" class="form-control" id="age" name="age" required>
                     </div>
                     <div class="form-group">
                       <label for="gender">Gender</label>
@@ -275,7 +267,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                       <input type="file" class="form-control-file" id="photo" name="photo" required>
                       <img id="imagePreview" src="#" alt="Image Preview" style="display:none;">
                     </div>
-                    <button type="submit" class="btn btn-primary">Register</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
                   </form>
                 </div>
                 <!-- /.card-body -->
