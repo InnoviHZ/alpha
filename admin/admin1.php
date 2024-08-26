@@ -65,6 +65,16 @@ $admin_reg_by = $admin_details['reg_by'];
 
       <!-- Right navbar links -->
       <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="registerDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-user-plus"></i> Register
+          </a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="registerDropdown">
+            <a class="dropdown-item" href="reg2.php">Register Beneficiary</a>
+            <a class="dropdown-item" href="reg_managers.php">Register Manager</a>
+            <a class="dropdown-item" href="./reg_admin.php">Register Admin</a>
+          </div>
+        </li>
         <!-- Profile Dropdown Menu -->
         <li class="nav-item dropdown">
           <a class="nav-link" data-toggle="dropdown" href="#">
