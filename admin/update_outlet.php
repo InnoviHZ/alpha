@@ -15,83 +15,27 @@ $name = $_SESSION["name"];
 $type = $_SESSION["type"];
 $picture = $_SESSION["picture"];
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $full_name = $_POST['full_name'];
-  $age = $_POST['age'];
-  $under = $id;
-  $gender = $_POST['gender'];
+$userId = $_GET["id"];
+// selecting outlet data from database
+$sql = "SELECT * FROM _PDOutlet WHERE id = $userId";
+$result = $mysqli->query($sql);
 
-  // Handle photo upload
-  $photo = '';
-  if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
-    $target_dir = "../assets/images/beneficiaries";
-    $file_type = pathinfo($_FILES["photo"]["name"], PATHINFO_EXTENSION);
-    $new_file_name = $full_name . '.' . $file_type; // Generate a unique filename
-    $target_file_path = $target_dir . $new_file_name;
-
-    $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
-    if (in_array($file_type, $allowed_types)) {
-      if (move_uploaded_file($_FILES["photo"]["tmp_name"], $target_file_path)) {
-        $photo = $new_file_name;
-      }
-    }
+if ($result->num_rows > 0) {
+  while ($row = $result->fetch_assoc()) {
+    $outletId = $row["id"];
+    $outletName = $row["full_name"];
+    $outletAge = $row["age"];
+    $outletunder = $row["under"];
+    $outletgender = $row["gender"];
+    $outletgender = $row["gender"];
+    $outletphoto = $row["photo"];
   }
-
-  // Insert Outlet data into the database
-  $sql = "INSERT INTO _PDOutlet (full_name, age, `under`, gender, photo) VALUES (?, ?, ?, ?, ?)";
-  if ($stmt = $mysqli->prepare($sql)) {
-    $stmt->bind_param("sssss", $full_name, $age, $under, $gender, $photo);
-
-    if ($stmt->execute()) {
-      echo "
-      <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css'>
-      <link href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css' rel='stylesheet'>
-      <script src='https://code.jquery.com/jquery-3.6.0.min.js'></script>
-      <script src='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js'></script>
-      <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js'></script>
-
-      <script>
-      $(document).ready(function() {
-          toastr.success('Registration Successful');
-          setTimeout(function() {
-              $('#successModal').modal('show');
-          }, 1500); // Show the modal after 1.5 seconds
-      });
-      </script>
-
-      <!-- Bootstrap Modal -->
-      <div class='modal fade' id='successModal' tabindex='-1' role='dialog' aria-labelledby='successModalLabel' aria-hidden='true'>
-          <div class='modal-dialog' role='document'>
-              <div class='modal-content'>
-                  <div class='modal-header'>
-                      <h5 class='modal-title' id='successModalLabel'>Registration Successful</h5>
-                      <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
-                          <span aria-hidden='true'>&times;</span>
-                      </button>
-                  </div>
-                  <div class='modal-body'>
-                      Your registration was successful. would you like to do go back to Dashboard?
-                  </div>
-                  <div class='modal-footer'>
-                      <a href='admin.php'><button type='button' class='btn btn-primary'>Go back to Dashboard</button></a>
-                      <button type='button' class='btn btn-secondary' data-dismiss='modal'>No Continue</button>
-                  </div>
-              </div>
-          </div>
-      </div>
-      ";
-    } else {
-      echo "<script>
-              $(document).ready(function() {
-                  toastr.error('Error registering Outlet. Please try again.');
-              });
-            </script>";
-    }
-    $stmt->close();
-  }
-
-  $mysqli->close();
+} else {
+  echo "0 results";
 }
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -248,15 +192,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                   <form action="" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                       <label for="full_name">Full Name</label>
-                      <input type="text" class="form-control" id="full_name" name="full_name" required>
+                      <input type="text" class="form-control" id="full_name" name="full_name" value="<?php echo $outletName; ?>" required>
                     </div>
                     <div class="form-group">
                       <label for="age">Age</label>
-                      <input type="number" class="form-control" id="age" name="age" required>
+                      <input type="number" class="form-control" id="age" name="age" value="<?php echo $outletAge; ?>" required>
                     </div>
                     <div class="form-group">
                       <label for="gender">Gender</label>
-                      <select class="form-control" id="gender" name="gender" required>
+                      <select class="form-control" id="gender" name="gender" value="<?php echo $outletgender; ?>" required>
                         <option value="">Select Gender</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
