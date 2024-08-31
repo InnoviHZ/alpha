@@ -15,6 +15,49 @@ $email = $_SESSION["email"];
 $name = $_SESSION["name"];
 $type = $_SESSION["type"];
 $picture = $_SESSION["picture"];
+
+// handle form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  // Collect form data
+  $name = $_POST['name'];
+  $lga = $_POST['lga'];
+  $ward = $_POST['ward'];
+  $address = $_POST['address'];
+  $capacity = $_POST['capacity'];
+
+  $sql = "INSERT INTO `_PDCollection_points`(`name`, `address`, `lga`, `ward`, `capacity`)
+                    VALUES (?, ?, ?, ?, ?)";
+
+  if ($stmt = $mysqli->prepare($sql)) {
+    $stmt->bind_param("ssssi", $name, $lga, $ward, $address, $capacity);
+
+    if ($stmt->execute()) {
+      echo "
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css'>
+        <link href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css' rel='stylesheet'>
+        <script src='https://code.jquery.com/jquery-3.6.0.min.js'></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js'></script>
+        <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js'></script>
+
+        <script>
+        $(document).ready(function() {
+            toastr.success('Registration Successful');
+            setTimeout(function() {
+                $('#successModal').modal('show');
+            }, 1500); // Show the modal after 1.5 seconds
+        });
+        </script>
+        ";
+    } else {
+      $errorMessage = "Error: " . $stmt->error;
+    }
+    $stmt->close();
+  } else {
+    $errorMessage = "Error: " . $mysqli->error;
+  }
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -151,7 +194,7 @@ $picture = $_SESSION["picture"];
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
-              <div class="card">
+              <div class="card" id="CollectionPointForm" style="display:block;">
                 <div class="card-header">
                   <div>
                     <h3 class="card-title">
@@ -186,26 +229,7 @@ $picture = $_SESSION["picture"];
                       <div class="col-md-6">
                         <div class="form-group">
                           <label for="full_name">Name:</label>
-                          <input type="text" class="form-control" id="full_name" name="full_name" required>
-                        </div>
-                        <div class="form-group">
-                          <label for="yod">Year of Death:</label>
-                          <input type="text" class="form-control" id="yod" name="yod">
-                        </div>
-                        <div class="form-group">
-                          <label for="full_name_b">Beneficiary Name:</label>
-                          <input type="text" class="form-control" id="full_name_b" name="full_name_b">
-                        </div>
-                        <div class="form-group">
-                          <label for="dob">Date of Birth:</label>
-                          <input type="date" class="form-control" id="dob" name="dob">
-                        </div>
-                        <div class="form-group">
-                          <label for="gender">Gender:</label>
-                          <select class="form-control" id="gender" name="gender">
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                          </select>
+                          <input type="text" class="form-control" id="name" name="name" required>
                         </div>
                         <div class="form-group">
                           <label for="lga">LGA:</label>
@@ -232,29 +256,8 @@ $picture = $_SESSION["picture"];
                           <textarea class="form-control" id="address" name="address"></textarea>
                         </div>
                         <div class="form-group">
-                          <label for="phone">Phone:</label>
-                          <input type="tel" class="form-control" id="phone" name="phone">
-                        </div>
-                        <div class="form-group">
-                          <label for="email">Email:</label>
-                          <input type="email" class="form-control" id="email" name="email">
-                        </div>
-                        <div class="form-group">
-                          <label for="id_number">ID Number:</label>
-                          <input type="text" class="form-control" id="id_number" name="id_number">
-                        </div>
-                        <div class="form-group">
-                          <label for="benefit_type">Benefit Type:</label>
-                          <select class="form-control" id="benefit_type" name="benefit_type">
-                            <option value="Type1">Type 1</option>
-                            <option value="Type2">Type 2</option>
-                            <option value="Type3">Type 3</option>
-                            <!-- Add more Benefit Type options as needed -->
-                          </select>
-                        </div>
-                        <div class="form-group">
-                          <label for="op_number">Operation Number:</label>
-                          <input type="text" class="form-control" id="op_number" name="op_number" value="">
+                          <label for="op_number">Capacity:</label>
+                          <input type="number" class="form-control" id="capacity" name="capacity" value="">
                         </div>
                       </div>
                     </div>
@@ -291,6 +294,7 @@ $picture = $_SESSION["picture"];
   <script>
     function register() {
       document.getElementById('newCollectionPointForm').style.display = 'block';
+      document.getElementById('CollectionPointForm').style.display = 'none';
     }
   </script>
 </body>

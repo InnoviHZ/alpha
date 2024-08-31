@@ -280,7 +280,7 @@ function displayCollection_pointTable($id)
     $mysqli = Config::getInstance()->getConnection();
 
     // Define the SQL query to fetch user details
-    $sql = "SELECT * FROM _PDOutlet  WHERE under = $id";
+    $sql = "SELECT * FROM _PDCollection_points ";
 
     // Execute the query
     if ($result = $mysqli->query($sql)) {
@@ -291,8 +291,9 @@ function displayCollection_pointTable($id)
             echo '<tr>';
             echo '<th>#</th>';
             echo '<th>Name</th>';
-            echo '<th>Age</th>';
-            echo '<th>Gender</th>';
+            echo '<th>Address</th>';
+            echo '<th>LGA</th>';
+            echo '<th>Ward</th>';
             echo '<th>Actions</th>';
             echo '</tr>';
             echo '</thead>';
@@ -304,9 +305,10 @@ function displayCollection_pointTable($id)
                 echo '<tr>';
                 echo '<td>' . $counter;
 
-                echo '<td>' . htmlspecialchars($row['full_name']) . '</td>';
-                echo '<td>' . htmlspecialchars($row['age']) . '</td>';
-                echo '<td>' . htmlspecialchars($row['gender']) . '</td>';
+                echo '<td>' . htmlspecialchars($row['name']) . '</td>';
+                echo '<td>' . htmlspecialchars($row['address']) . '</td>';
+                echo '<td>' . htmlspecialchars($row['lga']) . '</td>';
+                echo '<td>' . htmlspecialchars($row['ward']) . '</td>';
                 echo '<td>';
                 echo '<a href="update_outlet.php?id=' . $row['id'] . '" class="btn btn-warning btn-sm">Update</a> ';
                 echo '<form method="POST" action="delete_outlet.php" style="display:inline-block;">';

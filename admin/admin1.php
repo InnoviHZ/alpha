@@ -277,6 +277,11 @@ $admin_reg_by = $admin_details['reg_by'];
                     else echo "Beneficiary Details";
                     ?>
                   </h3>
+                  <div class="card-tools">
+                    <div class="input-group input-group-sm" style="width: 150px;">
+                      <button id="registerNewButton" onclick="register()" class="btn btn-primary">Register New</button>
+                    </div>
+                  </div>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
