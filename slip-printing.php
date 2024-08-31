@@ -106,15 +106,15 @@
                         <h2 class="text-center mb-4">Print Orphan Care Slip</h2>
                         <form>
                             <div class="mb-4">
-                                <label for="orphanId" class="form-label">Orphan ID or Guardian's Phone Number</label>
-                                <input type="text" id="orphanId" class="form-control form-control-lg" placeholder="Enter ID or Phone Number">
+                                <label for="key" class="form-label">Orphan ID or Guardian's Phone Number</label>
+                                <input type="text" id="key" class="form-control form-control-lg" placeholder="Enter ID or Phone Number">
                             </div>
                             <p class="text-muted mb-4">Please allow popups for this site from your browser</p>
                             <div class="d-grid gap-2">
-                                <button id="printBtn" class="btn btn-primary btn-lg" disabled>
+                                <button id="printBtn" class="btn btn-primary btn-lg" >
                                     <i class="fas fa-print me-2"></i> Print Orphan Care Slip
                                 </button>
-                                <button id="downloadBtn" class="btn btn-success btn-lg" disabled>
+                                <button id="downloadBtn" class="btn btn-success btn-lg" >
                                     <i class="fas fa-download me-2"></i> Download Slip
                                 </button>
                             </div>
@@ -129,20 +129,49 @@
     <?php include "./assets/include/footer.php" ?>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        const orphanIdInput = document.getElementById('orphanId');
+        const keyInput = document.getElementById('key');
         const printBtn = document.getElementById('printBtn');
         const downloadBtn = document.getElementById('downloadBtn');
+        let userDetails = null;
 
-        // ... rest of your JavaScript remains the same
-        orphanIdInput.addEventListener('input', function() {
+        keyInput.addEventListener('input', function() {
             const isInputFilled = this.value.trim() !== '';
             printBtn.disabled = !isInputFilled;
             downloadBtn.disabled = !isInputFilled;
         });
 
         printBtn.addEventListener('click', function() {
-            const orphanId = orphanIdInput.value;
+            const key = keyInput.value;
+            fetchUserDetails(key, printSlip);
+        });
+
+        downloadBtn.addEventListener('click', function() {
+            const key = keyInput.value;
+            fetchUserDetails(key, downloadSlip);
+        });
+
+        function fetchUserDetails(key, callback) {
+            $.ajax({
+                url: './admin/get_user_details.php',
+                type: 'GET',
+                data: { key: key },
+                success: function(response) {
+                    userDetails = JSON.parse(response);
+                    if (userDetails) {
+                        callback();
+                    } else {
+                        alert('User not found.');
+                    }
+                },
+                error: function() {
+                    alert('Error fetching user details.');
+                }
+            });
+        }
+
+        function printSlip() {
             const printWindow = window.open('', '_blank');
             printWindow.document.write(`
                 <html>
@@ -152,13 +181,24 @@
                             body { font-family: Arial, sans-serif; }
                             .slip { border: 1px solid #000; padding: 20px; max-width: 500px; margin: 20px auto; }
                             h1 { text-align: center; }
+                            .details { margin-top: 20px; }
+                            .details p { margin: 5px 0; }
                         </style>
                     </head>
                     <body>
                         <div class="slip">
                             <h1>Orphan Care Slip</h1>
-                            <p><strong>Orphan ID / Guardian's Phone:</strong> ${orphanId}</p>
-                            <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                            <div class="details">
+                                <p><strong>Orphan ID / Guardian's Phone:</strong> ${keyInput.value}</p>
+                                <p><strong>Name:</strong> ${userDetails.name}</p>
+                                <p><strong>Address:</strong> ${userDetails.address}</p>
+                                <p><strong>LGA:</strong> ${userDetails.lga}</p>
+                                <p><strong>Ward:</strong> ${userDetails.ward}</p>
+                                <p><strong>Collection Point Name:</strong> ${userDetails.collection_point.name}</p>
+                                <p><strong>Collection Point Address:</strong> ${userDetails.collection_point.address}</p>
+                                <p><strong>Capacity:</strong> ${userDetails.collection_point.capacity}</p>
+                                <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                            </div>
                             <p>This slip confirms the registration of the orphan with the provided ID/Phone number in our care program.</p>
                         </div>
                     </body>
@@ -166,13 +206,10 @@
             `);
             printWindow.document.close();
             printWindow.print();
-        });
+        }
 
-        downloadBtn.addEventListener('click', function() {
-            const orphanId = orphanIdInput.value;
-            const {
-                jsPDF
-            } = window.jspdf;
+        function downloadSlip() {
+            const { jsPDF } = window.jspdf;
 
             // Create new document in landscape A5 size
             const doc = new jsPDF({
@@ -216,14 +253,15 @@
             const contentStart = 40;
             const lineHeight = 8;
 
-            doc.text(`Id. Number: ${orphanId}`, 20, contentStart);
-            doc.text(`Name: Jafar Muhammad Tanko`, 20, contentStart + lineHeight);
-            doc.text(`Address: Kasuwar Shanu Azare`, 20, contentStart + 2 * lineHeight);
-            doc.text(`Number of Orphans: 8`, 20, contentStart + 3 * lineHeight);
-            doc.text(`Donation Requested: Food`, 20, contentStart + 4 * lineHeight);
-            doc.text(`Date and Time of Collection: 10-09-2029 (11:00am)`, 20, contentStart + 5 * lineHeight);
-            doc.text(`Collection Point: Azare`, 20, contentStart + 6 * lineHeight);
-            doc.text(`Collection Agent: Mudi Salga`, 20, contentStart + 7 * lineHeight);
+            doc.text(`Orphan ID / Guardian's Phone: ${keyInput.value}`, 20, contentStart);
+            doc.text(`Name: ${userDetails.name}`, 20, contentStart + lineHeight);
+            doc.text(`Address: ${userDetails.address}`, 20, contentStart + 2 * lineHeight);
+            doc.text(`LGA: ${userDetails.lga}`, 20, contentStart + 3 * lineHeight);
+            doc.text(`Ward: ${userDetails.ward}`, 20, contentStart + 4 * lineHeight);
+            doc.text(`Collection Point Name: ${userDetails.collection_point.name}`, 20, contentStart + 5 * lineHeight);
+            doc.text(`Collection Point Address: ${userDetails.collection_point.address}`, 20, contentStart + 6 * lineHeight);
+            doc.text(`Capacity: ${userDetails.collection_point.capacity}`, 20, contentStart + 7 * lineHeight);
+            doc.text(`Date and Time of Collection: ${new Date().toLocaleDateString()} (${new Date().toLocaleTimeString()})`, 20, contentStart + 8 * lineHeight);
 
             // Add placeholders for profile picture and QR code
             doc.rect(10, 95, 30, 30); // Profile picture placeholder
@@ -238,7 +276,7 @@
 
             // Save the PDF
             doc.save('OrphanDistributionCard.pdf');
-        });
+        }
     </script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

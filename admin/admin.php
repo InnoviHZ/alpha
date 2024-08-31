@@ -143,6 +143,17 @@ $admin_reg_by = $admin_details['reg_by'];
                   </form>
                 </a>
               </li>
+
+              <?php endif; ?>
+            <?php if (hasPermission('Manager')): ?>
+              <li class="nav-item">
+                <a href="./collection_point.php" class="nav-link">
+                  <form action="" method="get">
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>Manage Collection P.</p>
+                  </form>
+                </a>
+              </li>
             <?php endif; ?>
             <li class="nav-item">
               <a href="./bulk_upload.php" class="nav-link">
