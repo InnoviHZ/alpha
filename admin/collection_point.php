@@ -16,20 +16,33 @@ $name = $_SESSION["name"];
 $type = $_SESSION["type"];
 $picture = $_SESSION["picture"];
 
+// Fetch registered LGAs from the _PDUsers table
+$lgaQuery = "SELECT DISTINCT lga FROM _PDUsers";
+$lgaResult = $mysqli->query($lgaQuery);
+
+// Convert the results to arrays
+$lgas = [];
+while ($row = $lgaResult->fetch_assoc()) {
+  $lgas[] = $row['lga'];
+}
+
 // handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   // Collect form data
   $name = $_POST['name'];
   $lga = $_POST['lga'];
-  $ward = $_POST['ward'];
+  $wards = $_POST['ward']; // This will be an array of selected wards
   $address = $_POST['address'];
   $capacity = $_POST['capacity'];
+
+  // Convert the wards array to a comma-separated string
+  $wardsString = implode(",", $wards);
 
   $sql = "INSERT INTO `_PDCollection_points`(`name`, `address`, `lga`, `ward`, `capacity`)
                     VALUES (?, ?, ?, ?, ?)";
 
   if ($stmt = $mysqli->prepare($sql)) {
-    $stmt->bind_param("ssssi", $name, $lga, $ward, $address, $capacity);
+    $stmt->bind_param("ssssi", $name, $lga, $wardsString, $address, $capacity);
 
     if ($stmt->execute()) {
       echo "
@@ -57,7 +70,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
 }
 
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -78,31 +90,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   <div class="wrapper">
     <!-- Navbar and Sidebar code here (same as before) -->
-    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-      <!-- Left navbar links -->
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-        </li>
-        <li class="nav-item d-none d-sm-inline-block">
-          <a href="admin.php" class="nav-link">Home</a>
-        </li>
-        <!-- <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Contact</a>
-      </li> -->
-      </ul>
-
-      <!-- Right navbar links -->
-      <ul class="navbar-nav ml-auto">
-        <!-- Notifications Dropdown Menu -->
-        <li class="nav-item">
-          <a class="nav-link" href="logout.php">
-            <i class="fa fa-sign-out-alt"></i>
-          </a>
-        </li>
-      </ul>
-    </nav>
-    <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -125,18 +112,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           </div>
         </div>
 
-        <!-- SidebarSearch Form -->
-        <!-- <div class="form-inline">
-          <div class="input-group" data-widget="sidebar-search">
-            <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-            <div class="input-group-append">
-              <button class="btn btn-sidebar">
-                <i class="fas fa-search fa-fw"></i>
-              </button>
-            </div>
-          </div>
-        </div> -->
-
         <!-- Sidebar Menu -->
         <nav class="mt-2">
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
@@ -146,24 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <p>Dashboard</p>
               </a>
             </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-users"></i>
-                <p>Users</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-heart"></i>
-                <p>Donations</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-calendar"></i>
-                <p>Events</p>
-              </a>
-            </li>
+            <!-- Other menu items -->
           </ul>
         </nav>
         <!-- /.sidebar-menu -->
@@ -228,25 +186,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="row">
                       <div class="col-md-6">
                         <div class="form-group">
-                          <label for="full_name">Name:</label>
+                          <label for="name">Name:</label>
                           <input type="text" class="form-control" id="name" name="name" required>
                         </div>
                         <div class="form-group">
                           <label for="lga">LGA:</label>
-                          <select class="form-control" id="lga" name="lga">
-                            <option value="LGA1">LGA 1</option>
-                            <option value="LGA2">LGA 2</option>
-                            <option value="LGA3">LGA 3</option>
-                            <!-- Add more LGA options as needed -->
+                          <select class="form-control" id="lga" name="lga" onchange="fetchWards()">
+                            <option value="">Select LGA</option>
+                            <?php foreach ($lgas as $lga) { ?>
+                              <option value="<?php echo $lga; ?>"><?php echo $lga; ?></option>
+                            <?php } ?>
                           </select>
                         </div>
                         <div class="form-group">
                           <label for="ward">Ward:</label>
-                          <select class="form-control" id="ward" name="ward">
-                            <option value="Ward1">Ward 1</option>
-                            <option value="Ward2">Ward 2</option>
-                            <option value="Ward3">Ward 3</option>
-                            <!-- Add more Ward options as needed -->
+                          <select class="form-control" id="ward" name="ward[]" multiple required>
+                            <option value="">Select Ward</option>
                           </select>
                         </div>
                       </div>
@@ -256,12 +211,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                           <textarea class="form-control" id="address" name="address"></textarea>
                         </div>
                         <div class="form-group">
-                          <label for="op_number">Capacity:</label>
-                          <input type="number" class="form-control" id="capacity" name="capacity" value="">
+                          <label for="capacity">Capacity:</label>
+                          <input type="number" class="form-control" id="capacity" name="capacity" required>
                         </div>
                       </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Register</button>
+                    <div class="form-group">
+                      <button type="submit" class="btn btn-primary">Register Collection Point</button>
+                      <button type="button" class="btn btn-secondary" onclick="goBack()">Cancel</button>
+                    </div>
                   </form>
                 </div>
                 <!-- /.card-body -->
@@ -271,31 +229,65 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <!-- /.col -->
           </div>
           <!-- /.row -->
-        </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.container-fluid -->
       </section>
       <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
+
+    <!-- Footer -->
     <footer class="main-footer">
-      <strong>Copyright &copy; 2014-2023 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
-      All rights reserved.
-      <div class="float-right d-none d-sm-inline-block">
-        <b>Version</b> 3.2.0
+      <div class="float-right d-none d-sm-block">
+        <b>Version</b> 1.0.0
       </div>
+      <strong>&copy; 2024 <a href="#">Your Company</a>.</strong> All rights reserved.
     </footer>
+
   </div>
   <!-- ./wrapper -->
 
+<<<<<<< HEAD
   <!-- AdminLTE JS -->
   <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1.0/dist/js/adminlte.min.js"></script>
   <!-- Bootstrap JS and dependencies -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
   
+=======
+  <!-- REQUIRED SCRIPTS -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+>>>>>>> 5a207a3a0b6cee93143736e0f85e36a6a93b5fd6
   <script>
     function register() {
-      document.getElementById('newCollectionPointForm').style.display = 'block';
       document.getElementById('CollectionPointForm').style.display = 'none';
+      document.getElementById('newCollectionPointForm').style.display = 'block';
+    }
+
+    function goBack() {
+      document.getElementById('CollectionPointForm').style.display = 'block';
+      document.getElementById('newCollectionPointForm').style.display = 'none';
+    }
+
+    function fetchWards() {
+      var lga = $('#lga').val();
+      if (lga) {
+        $.ajax({
+          url: 'get_wards.php',
+          type: 'GET',
+          data: { lga: lga },
+          success: function(response) {
+            var wards = JSON.parse(response);
+            var wardSelect = $('#ward');
+            wardSelect.empty();
+            wards.forEach(function(ward) {
+              wardSelect.append('<option value="' + ward + '">' + ward + '</option>');
+            });
+          }
+        });
+      } else {
+        $('#ward').empty();
+      }
     }
   </script>
 </body>
