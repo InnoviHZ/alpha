@@ -272,7 +272,7 @@ $admin_reg_by = $admin_details['reg_by'];
                 <div class="icon">
                   <i class="fas fa-dollar-sign"></i>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="./collection_point.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
           </div>

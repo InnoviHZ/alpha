@@ -111,10 +111,7 @@
                             </div>
                             <p class="text-muted mb-4">Please allow popups for this site from your browser</p>
                             <div class="d-grid gap-2">
-                                <button id="printBtn" class="btn btn-primary btn-lg" >
-                                    <i class="fas fa-print me-2"></i> Print Orphan Care Slip
-                                </button>
-                                <button id="downloadBtn" class="btn btn-success btn-lg" >
+                                <button id="downloadBtn" class="btn btn-success btn-lg">
                                     <i class="fas fa-download me-2"></i> Download Slip
                                 </button>
                             </div>
@@ -131,152 +128,206 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        const keyInput = document.getElementById('key');
-        const printBtn = document.getElementById('printBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
-        let userDetails = null;
+        document.addEventListener('DOMContentLoaded', function() {
+            const keyInput = document.getElementById('key');
+            const downloadBtn = document.getElementById('downloadBtn');
 
-        keyInput.addEventListener('input', function() {
-            const isInputFilled = this.value.trim() !== '';
-            printBtn.disabled = !isInputFilled;
-            downloadBtn.disabled = !isInputFilled;
-        });
+            keyInput.addEventListener('input', function() {
+                const isInputFilled = this.value.trim() !== '';
+                downloadBtn.disabled = !isInputFilled;
+            });
 
-        printBtn.addEventListener('click', function() {
-            const key = keyInput.value;
-            fetchUserDetails(key, printSlip);
-        });
-
-        downloadBtn.addEventListener('click', function() {
-            const key = keyInput.value;
-            fetchUserDetails(key, downloadSlip);
+            downloadBtn.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent form submission
+                const key = keyInput.value;
+                fetchUserDetails(key, downloadSlip);
+            });
         });
 
         function fetchUserDetails(key, callback) {
             $.ajax({
                 url: './admin/get_user_details.php',
                 type: 'GET',
-                data: { key: key },
+                data: {
+                    key: key
+                },
                 success: function(response) {
-                    userDetails = JSON.parse(response);
-                    if (userDetails) {
-                        callback();
+                    console.log('Raw response:', response); // Debug log
+
+                    // Check if the response is already an object
+                    if (typeof response === 'object' && response !== null) {
+                        userDetails = response;
+                        // console.log('User details (already an object):', userDetails);
+                        if (validateUserDetails(userDetails)) {
+                            callback();
+                        } else {
+                            alert('Invalid user details structure received from server.');
+                        }
                     } else {
-                        alert('User not found.');
+                        try {
+                            // Attempt to parse the response as JSON
+                            userDetails = JSON.parse(response);
+                            // console.log('Parsed user details:', userDetails);
+                            if (validateUserDetails(userDetails)) {
+                                callback();
+                            } else {
+                                alert('Invalid user details structure received from server.');
+                            }
+                        } catch (error) {
+                            console.error('Error parsing JSON:', error);
+                            console.error('Raw response causing the error:', response);
+                            alert('Error processing user details. Please check the console for more information.');
+                        }
                     }
                 },
-                error: function() {
-                    alert('Error fetching user details.');
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('AJAX error:', textStatus, errorThrown);
+                    console.error('Full error object:', jqXHR);
+                    alert('Error fetching user details. Please check the console for more information.');
                 }
             });
         }
 
-        function printSlip() {
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <html>
-                    <head>
-                        <title>Orphan Care Slip</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; }
-                            .slip { border: 1px solid #000; padding: 20px; max-width: 500px; margin: 20px auto; }
-                            h1 { text-align: center; }
-                            .details { margin-top: 20px; }
-                            .details p { margin: 5px 0; }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="slip">
-                            <h1>Orphan Care Slip</h1>
-                            <div class="details">
-                                <p><strong>Orphan ID / Guardian's Phone:</strong> ${keyInput.value}</p>
-                                <p><strong>Name:</strong> ${userDetails.name}</p>
-                                <p><strong>Address:</strong> ${userDetails.address}</p>
-                                <p><strong>LGA:</strong> ${userDetails.lga}</p>
-                                <p><strong>Ward:</strong> ${userDetails.ward}</p>
-                                <p><strong>Collection Point Name:</strong> ${userDetails.collection_point.name}</p>
-                                <p><strong>Collection Point Address:</strong> ${userDetails.collection_point.address}</p>
-                                <p><strong>Capacity:</strong> ${userDetails.collection_point.capacity}</p>
-                                <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
-                            </div>
-                            <p>This slip confirms the registration of the orphan with the provided ID/Phone number in our care program.</p>
-                        </div>
-                    </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
+        function validateUserDetails(details) {
+            const requiredFields = ['full_name_b', 'address', 'lga', 'ward', 'collection_point_id', 'id_number'];
+            for (const field of requiredFields) {
+                if (!(field in details)) {
+                    console.error(`Missing required field: ${field}`);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function getCollectionPointDetails(collectionPointId) {
+            return new Promise((resolve, reject) => {
+                if (!collectionPointId) {
+                    reject(new Error('Collection Point ID is required'));
+                    return;
+                }
+
+                $.ajax({
+                    url: './admin/get_collection_point_details.php',
+                    type: 'GET',
+                    data: {
+                        id: collectionPointId
+                    },
+                    dataType: 'text', // Change this to 'text' instead of 'json'
+                    success: function(response) {
+                        try {
+                            const parsedResponse = JSON.parse(response);
+                            if (parsedResponse && typeof parsedResponse === 'object' && Object.keys(parsedResponse).length > 0) {
+                                resolve(parsedResponse);
+                            } else {
+                                reject(new Error('No collection point details found'));
+                            }
+                        } catch (error) {
+                            console.error('Raw server response:', response);
+                            reject(new Error(`Failed to parse server response: ${error.message}`));
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('AJAX error details:', {
+                            status: jqXHR.status,
+                            statusText: jqXHR.statusText,
+                            responseText: jqXHR.responseText
+                        });
+                        reject(new Error(`Failed to fetch collection point details: ${textStatus} - ${errorThrown}`));
+                    }
+                });
+            });
         }
 
         function downloadSlip() {
-            const { jsPDF } = window.jspdf;
+            if (!userDetails || !validateUserDetails(userDetails)) {
+                console.error('Invalid or missing user details');
+                alert('Unable to download slip. Invalid or missing user details.');
+                return;
+            }
+            if (userDetails.collection_point_id) {
+                getCollectionPointDetails(userDetails.collection_point_id)
+                    .then(collectionPointDetails => {
+                        const {
+                            jsPDF
+                        } = window.jspdf;
 
-            // Create new document in landscape A5 size
-            const doc = new jsPDF({
-                orientation: 'landscape',
-                unit: 'mm',
-                format: 'a5'
-            });
+                        // Create new document in landscape A5 size
+                        const doc = new jsPDF({
+                            orientation: 'landscape',
+                            unit: 'mm',
+                            format: 'a5'
+                        });
 
-            // Set document properties
-            doc.setProperties({
-                title: 'XYZORPHANS ORGANIZATION AND CENTER Distribution Card',
-                subject: 'Orphan Distribution Card',
-                author: 'XYZORPHANS ORGANIZATION AND CENTER',
-                keywords: 'orphan, distribution, card',
-                creator: 'XYZORPHANS ORGANIZATION AND CENTER'
-            });
+                        // Set document properties
+                        doc.setProperties({
+                            title: 'XYZORPHANS ORGANIZATION AND CENTER Distribution Card',
+                            subject: 'Orphan Distribution Card',
+                            author: 'XYZORPHANS ORGANIZATION AND CENTER',
+                            keywords: 'orphan, distribution, card',
+                            creator: 'XYZORPHANS ORGANIZATION AND CENTER'
+                        });
 
-            // Add border to the page
-            doc.setDrawColor(0);
-            doc.setLineWidth(0.5);
-            doc.rect(5, 5, 200, 138);
+                        // Add border to the page
+                        doc.setDrawColor(0);
+                        doc.setLineWidth(0.5);
+                        doc.rect(5, 5, 200, 138);
 
-            // Add header
-            doc.setFontSize(16);
-            doc.setFont("helvetica", "bold");
-            doc.text('XYZORPHANS ORGANIZATION AND CENTER', 105, 15, null, null, 'center');
+                        // Add header
+                        doc.setFontSize(16);
+                        doc.setFont("helvetica", "bold");
+                        doc.text('XYZORPHANS ORGANIZATION AND CENTER', 105, 15, null, null, 'center');
 
-            doc.setFontSize(8);
-            doc.setFont("helvetica", "normal");
-            doc.text('No.11 Kasuwar Shanu GRA, Bauchi Azare Nigeria 0803872992', 105, 22, null, null, 'center');
+                        doc.setFontSize(8);
+                        doc.setFont("helvetica", "normal");
+                        doc.text('No.11 Kasuwar Shanu GRA, Bauchi Azare Nigeria 0803872992', 105, 22, null, null, 'center');
 
-            // Add title
-            doc.setFontSize(14);
-            doc.setFont("helvetica", "bold");
-            doc.text('DISTRIBUTIONS CARD', 105, 30, null, null, 'center');
+                        // Add title
+                        doc.setFontSize(14);
+                        doc.setFont("helvetica", "bold");
+                        doc.text('DISTRIBUTIONS CARD', 105, 30, null, null, 'center');
 
-            // Add content
-            doc.setFontSize(10);
-            doc.setFont("helvetica", "normal");
+                        // Add content
+                        doc.setFontSize(10);
+                        doc.setFont("helvetica", "normal");
 
-            const contentStart = 40;
-            const lineHeight = 8;
+                        const contentStart = 40;
+                        const lineHeight = 8;
 
-            doc.text(`Orphan ID / Guardian's Phone: ${keyInput.value}`, 20, contentStart);
-            doc.text(`Name: ${userDetails.name}`, 20, contentStart + lineHeight);
-            doc.text(`Address: ${userDetails.address}`, 20, contentStart + 2 * lineHeight);
-            doc.text(`LGA: ${userDetails.lga}`, 20, contentStart + 3 * lineHeight);
-            doc.text(`Ward: ${userDetails.ward}`, 20, contentStart + 4 * lineHeight);
-            doc.text(`Collection Point Name: ${userDetails.collection_point.name}`, 20, contentStart + 5 * lineHeight);
-            doc.text(`Collection Point Address: ${userDetails.collection_point.address}`, 20, contentStart + 6 * lineHeight);
-            doc.text(`Capacity: ${userDetails.collection_point.capacity}`, 20, contentStart + 7 * lineHeight);
-            doc.text(`Date and Time of Collection: ${new Date().toLocaleDateString()} (${new Date().toLocaleTimeString()})`, 20, contentStart + 8 * lineHeight);
+                        doc.text(`Orphan ID / Guardian's Phone: ${userDetails.id_number}`, 20, contentStart);
+                        doc.text(`Name: ${userDetails.full_name_b}`, 20, contentStart + lineHeight);
+                        doc.text(`Address: ${userDetails.address}`, 20, contentStart + 2 * lineHeight);
+                        doc.text(`LGA: ${userDetails.lga}`, 20, contentStart + 3 * lineHeight);
+                        doc.text(`Ward: ${userDetails.ward}`, 20, contentStart + 4 * lineHeight);
+                        console.log('Collection Point Details:', collectionPointDetails);
+                        doc.text(`Collection Point Name: ${collectionPointDetails.name}`, 20, contentStart + 5 * lineHeight);
+                        doc.text(`Collection Point Address: ${collectionPointDetails.address}`, 20, contentStart + 6 * lineHeight);
+                        doc.text(`Capacity: ${collectionPointDetails.capacity}`, 20, contentStart + 7 * lineHeight);
+                        doc.text(`Date and Time of Collection: ${new Date().toLocaleDateString()} (${new Date().toLocaleTimeString()})`, 20, contentStart + 8 * lineHeight);
 
-            // Add placeholders for profile picture and QR code
-            doc.rect(10, 95, 30, 30); // Profile picture placeholder
-            doc.rect(165, 95, 30, 30); // QR code placeholder
+                        // Add placeholders for profile picture and QR code
+                        doc.rect(10, 95, 30, 30); // Profile picture placeholder
+                        doc.rect(165, 95, 30, 30); // QR code placeholder
 
-            // Add footer
-            doc.setFillColor(0);
-            doc.rect(5, 130, 200, 10, 'F');
-            doc.setTextColor(255);
-            doc.setFontSize(8);
-            doc.text('www.xyzorphans.com.ng', 105, 136, null, null, 'center');
+                        // Add footer
+                        doc.setFillColor(0);
+                        doc.rect(5, 130, 200, 10, 'F');
+                        doc.setTextColor(255);
+                        doc.setFontSize(8);
+                        doc.text('www.xyzorphans.com.ng', 105, 136, null, null, 'center');
 
-            // Save the PDF
-            doc.save('OrphanDistributionCard.pdf');
+                        // Save the PDF
+                        doc.save('OrphanDistributionCard.pdf');
+                    })
+                    .catch(error => {
+                        console.error('Error:', error.message);
+                        // You might want to display this error to the user
+                        alert('Failed to fetch collection point details. Please try again or contact support.');
+                    });
+            } else {
+                console.log('No collection point ID available');
+            }
         }
+        console.log('jsPDF availability:', typeof window.jspdf !== 'undefined');
     </script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

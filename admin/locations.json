@@ -1,0 +1,33 @@
+{
+  "states": {
+    "Bauchi": {
+      "LGAs": {
+      "Alkaleri": ["Alkaleri", "Gar", "Gwa'na", "Kasshi", "Mado", "Pali", "Yelwa"],
+      "Bauchi": ["Birshi", "Dan'iya", "Danlami", "Dawaki", "Galambi", "Hardo", "Makama Sarkin Baki"],
+      "Bogoro": ["Bogoro", "Boi", "Lusa", "Mallam Sidi", "Tafawa Balewa"],
+      "Dambam": ["Dambam", ""],
+      "Dass": ["Dass", ""],
+      "Ganjuwa": ["Ganjuwa", "Birni", "Ganjuwa", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
+      "Giade": ["Giade", ""],
+      "Itas/Gadau": ["Itas/Gadau", "Birni", "Gadau"],
+      "Katagum": ["Katagum", "Azare"],
+      "Kirfi": ["Kirfi", ""],
+      "Misau": ["Misau", ""],
+      "Ningi": ["Ningi", "Birni", "Gadau", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
+      "Shira": ["Shira", ""],
+      "Tafawa Balewa": ["Tafawa Balewa", "Birni", "Gadau", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
+      "Toro": ["Toro", "Birni", "Gadau", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
+      "Warji": ["Warji", ""],
+      "Zaki": ["Zaki", "Birni", "Gadau", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
+      "Darazo": ["Darazo", "Birni", "Gadau", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
+      "Gamawa": ["Gamawa", ""]
+      }
+    },
+    "Kano": {
+      "LGAs": {
+        "LGA3": ["Ward5", "Ward6"],
+        "LGA4": ["Ward7", "Ward8"]
+      }
+    }
+  }
+}

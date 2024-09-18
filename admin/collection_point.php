@@ -30,19 +30,20 @@ while ($row = $lgaResult->fetch_assoc()) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   // Collect form data
   $name = $_POST['name'];
+  $state = $_POST['state'];
   $lga = $_POST['lga'];
-  $wards = $_POST['ward']; // This will be an array of selected wards
+  $wards = isset($_POST['wards']) ? $_POST['wards'] : []; // This will be an array of selected wards
   $address = $_POST['address'];
   $capacity = $_POST['capacity'];
 
   // Convert the wards array to a comma-separated string
   $wardsString = implode(",", $wards);
 
-  $sql = "INSERT INTO `_PDCollection_points`(`name`, `address`, `lga`, `ward`, `capacity`)
-                    VALUES (?, ?, ?, ?, ?)";
+  $sql = "INSERT INTO `_PDCollection_points`(`name`, `address`,`state`, `lga`, `ward`, `capacity`)
+                    VALUES (?, ?, ?, ?, ?, ?)";
 
   if ($stmt = $mysqli->prepare($sql)) {
-    $stmt->bind_param("ssssi", $name, $lga, $wardsString, $address, $capacity);
+    $stmt->bind_param("sssssi", $name, $address, $state, $lga, $wardsString, $capacity);
 
     if ($stmt->execute()) {
       echo "
@@ -190,19 +191,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                           <input type="text" class="form-control" id="name" name="name" required>
                         </div>
                         <div class="form-group">
-                          <label for="lga">LGA:</label>
-                          <select class="form-control" id="lga" name="lga" onchange="fetchWards()">
-                            <option value="">Select LGA</option>
-                            <?php foreach ($lgas as $lga) { ?>
-                              <option value="<?php echo $lga; ?>"><?php echo $lga; ?></option>
-                            <?php } ?>
+                          <label for="state">State</label>
+                          <select class="form-control" id="state" name="state">
+                            <option value="">Select State</option>
+                            <!-- States will be populated dynamically -->
                           </select>
                         </div>
+
                         <div class="form-group">
-                          <label for="ward">Ward:</label>
-                          <select class="form-control" id="ward" name="ward[]" multiple required>
-                            <option value="">Select Ward</option>
+                          <label for="lga">Local Government Area (LGA)</label>
+                          <select class="form-control" id="lga" name="lga">
+                            <option value="">Select LGA</option>
+                            <!-- LGAs will be populated dynamically -->
                           </select>
+                        </div>
+
+                        <div class="form-group">
+                          <label>Wards</label>
+                          <div id="wardsCheckboxes">
+                            <!-- Wards checkboxes will be populated dynamically -->
+                          </div>
                         </div>
                       </div>
                       <div class="col-md-6">
@@ -247,17 +255,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   </div>
   <!-- ./wrapper -->
 
-<<<<<<< HEAD
   <!-- AdminLTE JS -->
   <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1.0/dist/js/adminlte.min.js"></script>
   <!-- Bootstrap JS and dependencies -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-  
-=======
-  <!-- REQUIRED SCRIPTS -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
->>>>>>> 5a207a3a0b6cee93143736e0f85e36a6a93b5fd6
+
   <script>
     function register() {
       document.getElementById('CollectionPointForm').style.display = 'none';
@@ -275,7 +278,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $.ajax({
           url: 'get_wards.php',
           type: 'GET',
-          data: { lga: lga },
+          data: {
+            lga: lga
+          },
           success: function(response) {
             var wards = JSON.parse(response);
             var wardSelect = $('#ward');
@@ -289,6 +294,55 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $('#ward').empty();
       }
     }
+  </script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      var locationsData;
+
+      // Load the JSON data
+      $.getJSON('locations.json', function(data) {
+        locationsData = data.states;
+
+        // Populate the states dropdown
+        for (var state in locationsData) {
+          $('#state').append('<option value="' + state + '">' + state + '</option>');
+        }
+      });
+
+      // Handle State change
+      $('#state').change(function() {
+        var state = $(this).val();
+        $('#lga').html('<option value="">Select LGA</option>');
+        $('#wardsCheckboxes').empty();
+
+        if (state && locationsData[state]) {
+          var lgas = locationsData[state].LGAs;
+          for (var lga in lgas) {
+            $('#lga').append('<option value="' + lga + '">' + lga + '</option>');
+          }
+        }
+      });
+
+      // Handle LGA change
+      $('#lga').change(function() {
+        var state = $('#state').val();
+        var lga = $(this).val();
+        $('#wardsCheckboxes').empty();
+
+        if (state && lga && locationsData[state].LGAs[lga]) {
+          var wards = locationsData[state].LGAs[lga];
+          for (var i = 0; i < wards.length; i++) {
+            $('#wardsCheckboxes').append(
+              '<div class="form-check">' +
+              '<input class="form-check-input" type="checkbox" name="wards[]" value="' + wards[i] + '" id="ward' + i + '">' +
+              '<label class="form-check-label" for="ward' + i + '">' + wards[i] + '</label>' +
+              '</div>'
+            );
+          }
+        }
+      });
+    });
   </script>
 </body>
 

@@ -24,6 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $fullNameB = $_POST['fullNameB'];
   $dob = $_POST['dob'];
   $gender = $_POST['gender'];
+  $state = $_POST['state'];
   $lga = $_POST['lga'];
   $ward = $_POST['ward'];
   $address = $_POST['address'];
@@ -44,14 +45,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   // Allow certain file formats
   $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
   if (in_array($fileType, $allowTypes)) {
-    // Upload file to server
+    // Upload file to server.*
     if (move_uploaded_file($_FILES["photo"]["tmp_name"], $targetFilePath)) {
       // Insert beneficiary data into database
-      $sql = "INSERT INTO _PDUsers (full_name, yod, full_name_b, dob, gender, lga, ward, address, phone, email, id_number, benefit_type, photo, op_number,reg_by)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?)";
+      $sql = "INSERT INTO _PDUsers (full_name, yod, full_name_b, dob, gender, state , lga, ward, address, phone, email, id_number, benefit_type, photo, op_number,reg_by)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ? , ?)";
 
       if ($stmt = $mysqli->prepare($sql)) {
-        $stmt->bind_param("sssssssssssssss", $fullName, $yod, $fullNameB, $dob, $gender, $lga, $ward, $address, $phone, $email, $idNumber, $benefitType, $photo, $opNumber, $reg_by);
+        $stmt->bind_param("ssssssssssssssss", $fullName, $yod, $fullNameB, $dob, $gender, $state, $lga, $ward, $address, $phone, $email, $idNumber, $benefitType, $photo, $opNumber, $reg_by);
 
         if ($stmt->execute()) {
           echo "
@@ -274,8 +275,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <section class="content">
         <div class="container-fluid">
           <div class="row">
-            <div class="col-md-6 m-auto">
-              <div class="card">
+            <div class="col-md-12 m-auto">
+              <div class="card card-primary">
                 <div class="card-header">
                   <h3 class="card-title">Register New Beneficiary</h3>
                 </div>
@@ -290,104 +291,100 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                   }
                   ?>
                   <form id="beneficiaryForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" enctype="multipart/form-data">
-                    <div class="form-group">
-                      <label for="fullName">Full Name of Late</label>
-                      <input type="text" class="form-control" id="fullName" name="fullName" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="yod">Year of Death</label>
-                      <input type="date" class="form-control" id="yod" name="yod" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="fullNameB">Full Name of Beneficiary</label>
-                      <input type="text" class="form-control" id="fullNameB" name="fullNameB" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="dob">Date of Birth</label>
-                      <input type="date" class="form-control" id="dob" name="dob" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="gender">Gender</label>
-                      <select class="form-control" id="gender" name="gender" required>
-                        <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label for="lga">Local Government Area (LGA)</label>
-                      <select class="form-control" id="lga" name="lga" onchange="updateWards()" required>
-                        <option value="">Select LGA</option>
-                        <option value="Alkaleri">Alkaleri</option>
-                        <option value="Bauchi">Bauchi</option>
-                        <option value="Bogoro">Bogoro</option>
-                        <option value="Dambam">Dambam</option>
-                        <option value="Dass">Dass</option>
-                        <option value="Ganjuwa">Ganjuwa</option>
-                        <option value="Giade">Giade</option>
-                        <option value="Itas/Gadau">Itas/Gadau</option>
-                        <option value="Jama'are">Jama'are</option>
-                        <option value="Katagum">Katagum</option>
-                        <option value="Kirfi">Kirfi</option>
-                        <option value="Misau">Misau</option>
-                        <option value="Ningi">Ningi</option>
-                        <option value="Shira">Shira</option>
-                        <option value="Tafawa Balewa">Tafawa Balewa</option>
-                        <option value="Toro">Toro</option>
-                        <option value="Warji">Warji</option>
-                        <option value="Zaki">Zaki</option>
-                        <option value="Darazo">Darazo</option>
-                        <option value="Gamawa">Gamawa</option>
-                        <!-- Add more LGAs here -->
-                      </select>
-                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="fullName">Full Name of Late</label>
+                          <input type="text" class="form-control" id="fullName" name="fullName" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="yod">Year of Death</label>
+                          <input type="date" class="form-control" id="yod" name="yod" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="fullNameB">Full Name of Beneficiary</label>
+                          <input type="text" class="form-control" id="fullNameB" name="fullNameB" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="dob">Date of Birth</label>
+                          <input type="date" class="form-control" id="dob" name="dob" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="gender">Gender</label>
+                          <select class="form-control" id="gender" name="gender" required>
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="state">State</label>
+                          <select class="form-control" id="state" name="state">
+                            <option value="">Select State</option>
+                            <!-- States will be populated dynamically -->
+                          </select>
+                        </div>
 
-                    <div class="form-group">
-                      <label for="ward">Ward</label>
-                      <select class="form-control" id="ward" name="ward" required>
-                        <option value="">Select Ward</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label for="address">Address</label>
-                      <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
-                    </div>
-                    <div class="form-group">
-                      <label for="opNumber">Number of Orphans</label>
-                      <input type="text" class="form-control" id="opNumber" name="opNumber" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="phone">Phone Number</label>
-                      <input type="tel" class="form-control" id="phone" name="phone" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="email">Email</label>
-                      <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    <!-- <div class="form-group">
+                        <div class="form-group">
+                          <label for="lga">Local Government Area (LGA)</label>
+                          <select class="form-control" id="lga" name="lga">
+                            <option value="">Select LGA</option>
+                            <!-- LGAs will be populated dynamically -->
+                          </select>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="ward">Ward</label>
+                          <select class="form-control" id="ward" name="ward">
+                            <option value="">Select Ward</option>
+                            <!-- Wards will be populated dynamically -->
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="address">Address</label>
+                          <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="opNumber">Number of Orphans</label>
+                          <input type="text" class="form-control" id="opNumber" name="opNumber" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="phone">Phone Number</label>
+                          <input type="tel" class="form-control" id="phone" name="phone" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="email">Email</label>
+                          <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <!-- <div class="form-group">
                       <label for="idNumber">ID Number</label>
                       <input type="text" class="form-control" id="idNumber" name="idNumber" required>
                     </div> -->
-                    <div class="form-group">
-                      <label for="benefitType">Benefit Type</label>
-                      <select class="form-control" id="benefitType" name="benefitType" required>
-                        <option value="">Select Benefit Type</option>
-                        <option value="financial">Financial Aid</option>
-                        <option value="medical">Medical Assistance</option>
-                        <option value="education">Education Support</option>
-                        <option value="housing">Housing Assistance</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label for="photo">Photo</label>
-                      <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="photo" name="photo" accept="image/*" required>
-                        <label class="custom-file-label" for="photo">Choose file</label>
+                        <div class="form-group">
+                          <label for="benefitType">Benefit Type</label>
+                          <select class="form-control" id="benefitType" name="benefitType" required>
+                            <option value="">Select Benefit Type</option>
+                            <option value="financial">Financial Aid</option>
+                            <option value="medical">Medical Assistance</option>
+                            <option value="education">Education Support</option>
+                            <option value="housing">Housing Assistance</option>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="photo">Photo</label>
+                          <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="photo" name="photo" accept="image/*" required>
+                            <label class="custom-file-label" for="photo">Choose file</label>
+                          </div>
+                          <img id="imagePreview" src="#" alt="Image Preview" style="display:none;">
+                        </div>
                       </div>
-                      <img id="imagePreview" src="#" alt="Image Preview" style="display:none;">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Register Beneficiary</button>
+                      <button type="submit" class="mx-2 btn btn-primary">Register Beneficiary</button>
+                    </div> 
                   </form>
+
                 </div>
                 <!-- /.card-body -->
               </div>
@@ -447,49 +444,52 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
       }
     });
-
-
-    const lgaWards = {
-      "Alkaleri": ["Alkaleri", "Gar", "Gwa'na", "Kasshi", "Mado", "Pali", "Yelwa"],
-      "Bauchi": ["Birshi", "Dan'iya", "Danlami", "Dawaki", "Galambi", "Hardo", "Makama Sarkin Baki"],
-      "Bogoro": ["Bogoro", "Boi", "Lusa", "Mallam Sidi", "Tafawa Balewa"],
-      "Dambam": ["Dambam", ""],
-      "Dass": ["Dass", ""],
-      "Ganjuwa": ["Ganjuwa", "Birni", "Ganjuwa", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
-      "Giade": ["Giade", ""],
-      "Itas/Gadau": ["Itas/Gadau", "Birni", "Gadau"],
-      "Katagum": ["Katagum", "Azare"],
-      "Kirfi": ["Kirfi", ""],
-      "Misau": ["Misau", ""],
-      "Ningi": ["Ningi", "Birni", "Gadau", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
-      "Shira": ["Shira", ""],
-      "Tafawa Balewa": ["Tafawa Balewa", "Birni", "Gadau", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
-      "Toro": ["Toro", "Birni", "Gadau", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
-      "Warji": ["Warji", ""],
-      "Zaki": ["Zaki", "Birni", "Gadau", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
-      "Darazo": ["Darazo", "Birni", "Gadau", "Kankara", "Kazali", "Makoda", "Rano", "Sabon Gari"],
-      "Gamawa": ["Gamawa", ""],
-      // Add more LGAs and their respective wards here
-    };
-
-    function updateWards() {
-      const lgaSelect = document.getElementById("lga");
-      const wardSelect = document.getElementById("ward");
-      const selectedLGA = lgaSelect.value;
-
-      // Clear existing options
-      wardSelect.innerHTML = "<option value=''>Select Ward</option>";
-
-      if (selectedLGA in lgaWards) {
-        lgaWards[selectedLGA].forEach(ward => {
-          const option = document.createElement("option");
-          option.value = ward;
-          option.textContent = ward;
-          wardSelect.appendChild(option);
-        });
-      }
-    }
   </script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      var locationsData;
+
+      // Load the JSON data
+      $.getJSON('locations.json', function(data) {
+        locationsData = data.states; // Store the JSON data
+
+        // Populate the states dropdown
+        for (var state in locationsData) {
+          $('#state').append('<option value="' + state + '">' + state + '</option>');
+        }
+      });
+
+      // Handle State change
+      $('#state').change(function() {
+        var state = $(this).val();
+        $('#lga').html('<option value="">Select LGA</option>'); // Reset LGA dropdown
+        $('#ward').html('<option value="">Select Ward</option>'); // Reset Ward dropdown
+
+        if (state && locationsData[state]) {
+          var lgas = locationsData[state].LGAs;
+          for (var lga in lgas) {
+            $('#lga').append('<option value="' + lga + '">' + lga + '</option>');
+          }
+        }
+      });
+
+      // Handle LGA change
+      $('#lga').change(function() {
+        var state = $('#state').val();
+        var lga = $(this).val();
+        $('#ward').html('<option value="">Select Ward</option>'); // Reset Ward dropdown
+
+        if (state && lga && locationsData[state].LGAs[lga]) {
+          var wards = locationsData[state].LGAs[lga];
+          for (var i = 0; i < wards.length; i++) {
+            $('#ward').append('<option value="' + wards[i] + '">' + wards[i] + '</option>');
+          }
+        }
+      });
+    });
+  </script>
+
 </body>
 
 </html>
