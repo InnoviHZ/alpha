@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Add Toastr CSS and JS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <link rel="stylesheet" href="./assets/css/style.css">
     <style>
         @keyframes gradient {
@@ -189,7 +192,7 @@
         }
 
         function validateUserDetails(details) {
-            const requiredFields = ['full_name_b', 'address', 'lga', 'ward', 'collection_point_id', 'id_number'];
+            const requiredFields = ['id_number', 'full_name_b', 'ward', 'address', 'op_number', 'benefit_type', 'collection_point_id'];
             for (const field of requiredFields) {
                 if (!(field in details)) {
                     console.error(`Missing required field: ${field}`);
@@ -238,94 +241,129 @@
             });
         }
 
+        function getCollectionPointByWard(ward) {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: './admin/get_collection_point_by_ward.php',
+                    type: 'GET',
+                    data: {
+                        ward: ward
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response && typeof response === 'object' && !response.error) {
+                            resolve(response);
+                        } else {
+                            reject(new Error(response.error || 'No collection point found for the given ward'));
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('AJAX error details:', {
+                            status: jqXHR.status,
+                            statusText: jqXHR.statusText,
+                            responseText: jqXHR.responseText
+                        });
+                        reject(new Error(`Failed to fetch collection point details: ${textStatus} - ${errorThrown}`));
+                    }
+                });
+            });
+        }
+
         function downloadSlip() {
             if (!userDetails || !validateUserDetails(userDetails)) {
                 console.error('Invalid or missing user details');
                 alert('Unable to download slip. Invalid or missing user details.');
                 return;
             }
+
+            let collectionPointPromise;
+
             if (userDetails.collection_point_id) {
-                getCollectionPointDetails(userDetails.collection_point_id)
-                    .then(collectionPointDetails => {
-                        const {
-                            jsPDF
-                        } = window.jspdf;
-
-                        // Create new document in landscape A5 size
-                        const doc = new jsPDF({
-                            orientation: 'landscape',
-                            unit: 'mm',
-                            format: 'a5'
-                        });
-
-                        // Set document properties
-                        doc.setProperties({
-                            title: 'XYZORPHANS ORGANIZATION AND CENTER Distribution Card',
-                            subject: 'Orphan Distribution Card',
-                            author: 'XYZORPHANS ORGANIZATION AND CENTER',
-                            keywords: 'orphan, distribution, card',
-                            creator: 'XYZORPHANS ORGANIZATION AND CENTER'
-                        });
-
-                        // Add border to the page
-                        doc.setDrawColor(0);
-                        doc.setLineWidth(0.5);
-                        doc.rect(5, 5, 200, 138);
-
-                        // Add header
-                        doc.setFontSize(16);
-                        doc.setFont("helvetica", "bold");
-                        doc.text('XYZORPHANS ORGANIZATION AND CENTER', 105, 15, null, null, 'center');
-
-                        doc.setFontSize(8);
-                        doc.setFont("helvetica", "normal");
-                        doc.text('No.11 Kasuwar Shanu GRA, Bauchi Azare Nigeria 0803872992', 105, 22, null, null, 'center');
-
-                        // Add title
-                        doc.setFontSize(14);
-                        doc.setFont("helvetica", "bold");
-                        doc.text('DISTRIBUTIONS CARD', 105, 30, null, null, 'center');
-
-                        // Add content
-                        doc.setFontSize(10);
-                        doc.setFont("helvetica", "normal");
-
-                        const contentStart = 40;
-                        const lineHeight = 8;
-
-                        doc.text(`Orphan ID / Guardian's Phone: ${userDetails.id_number}`, 20, contentStart);
-                        doc.text(`Name: ${userDetails.full_name_b}`, 20, contentStart + lineHeight);
-                        doc.text(`Address: ${userDetails.address}`, 20, contentStart + 2 * lineHeight);
-                        doc.text(`LGA: ${userDetails.lga}`, 20, contentStart + 3 * lineHeight);
-                        doc.text(`Ward: ${userDetails.ward}`, 20, contentStart + 4 * lineHeight);
-                        console.log('Collection Point Details:', collectionPointDetails);
-                        doc.text(`Collection Point Name: ${collectionPointDetails.name}`, 20, contentStart + 5 * lineHeight);
-                        doc.text(`Collection Point Address: ${collectionPointDetails.address}`, 20, contentStart + 6 * lineHeight);
-                        doc.text(`Capacity: ${collectionPointDetails.capacity}`, 20, contentStart + 7 * lineHeight);
-                        doc.text(`Date and Time of Collection: ${new Date().toLocaleDateString()} (${new Date().toLocaleTimeString()})`, 20, contentStart + 8 * lineHeight);
-
-                        // Add placeholders for profile picture and QR code
-                        doc.rect(10, 95, 30, 30); // Profile picture placeholder
-                        doc.rect(165, 95, 30, 30); // QR code placeholder
-
-                        // Add footer
-                        doc.setFillColor(0);
-                        doc.rect(5, 130, 200, 10, 'F');
-                        doc.setTextColor(255);
-                        doc.setFontSize(8);
-                        doc.text('www.xyzorphans.com.ng', 105, 136, null, null, 'center');
-
-                        // Save the PDF
-                        doc.save('OrphanDistributionCard.pdf');
-                    })
-                    .catch(error => {
-                        console.error('Error:', error.message);
-                        // You might want to display this error to the user
-                        alert('Failed to fetch collection point details. Please try again or contact support.');
-                    });
+                collectionPointPromise = getCollectionPointDetails(userDetails.collection_point_id);
+            } else if (userDetails.ward) {
+                collectionPointPromise = getCollectionPointByWard(userDetails.ward);
             } else {
-                console.log('No collection point ID available');
+                console.error('No collection point ID or ward available');
+                alert('Unable to determine collection point. Please contact support.');
+                return;
             }
+
+            collectionPointPromise.then(collectionPointDetails => {
+                    const {
+                        jsPDF
+                    } = window.jspdf;
+
+                    // Create new document in landscape A5 size
+                    const doc = new jsPDF({
+                        orientation: 'landscape',
+                        unit: 'mm',
+                        format: 'a5'
+                    });
+
+                    // Set document properties
+                    doc.setProperties({
+                        title: 'XYZORPHANS ORGANIZATION AND CENTER Distribution Card',
+                        subject: 'Orphan Distribution Card',
+                        author: 'XYZORPHANS ORGANIZATION AND CENTER',
+                        keywords: 'orphan, distribution, card',
+                        creator: 'XYZORPHANS ORGANIZATION AND CENTER'
+                    });
+
+                    // Add border to the page
+                    doc.setDrawColor(0);
+                    doc.setLineWidth(0.5);
+                    doc.rect(5, 5, 200, 138);
+
+                    // Add header
+                    doc.setFontSize(16);
+                    doc.setFont("helvetica", "bold");
+                    doc.text('XYZORPHANS ORGANIZATION AND CENTER', 105, 15, null, null, 'center');
+
+                    doc.setFontSize(8);
+                    doc.setFont("helvetica", "normal");
+                    doc.text('No.11 Kasuwar Shanu GRA, Bauchi Azare Nigeria 0803872992', 105, 22, null, null, 'center');
+
+                    // Add title
+                    doc.setFontSize(14);
+                    doc.setFont("helvetica", "bold");
+                    doc.text('DISTRIBUTIONS CARD', 105, 30, null, null, 'center');
+
+                    // Add content
+                    doc.setFontSize(10);
+                    doc.setFont("helvetica", "normal");
+
+                    const contentStart = 40;
+                    const lineHeight = 8;
+
+                    doc.text(`Id. Number: ${userDetails.id_number}`, 20, contentStart);
+                    doc.text(`Name: ${userDetails.full_name_b}`, 20, contentStart + lineHeight);
+                    doc.text(`Address: ${userDetails.address}`, 20, contentStart + 2 * lineHeight);
+                    doc.text(`Number of Orphans: ${userDetails.op_number}`, 20, contentStart + 3 * lineHeight);
+                    doc.text(`Donation Requested: ${userDetails.benefit_type }`, 20, contentStart + 4 * lineHeight);
+                    const collectionDate = new Date();
+                    const formattedDate = `${collectionDate.getDate().toString().padStart(2, '0')}-${(collectionDate.getMonth() + 1).toString().padStart(2, '0')}-${collectionDate.getFullYear()} (${collectionDate.getHours().toString().padStart(2, '0')}:${collectionDate.getMinutes().toString().padStart(2, '0')}${collectionDate.getHours() >= 12 ? 'pm' : 'am'})`;
+                    doc.text(`Date and Time of Collection: ${formattedDate}`, 20, contentStart + 5 * lineHeight);
+                    doc.text(`Collection Point: ${collectionPointDetails.name}`, 20, contentStart + 6 * lineHeight);
+
+                    // Add placeholders for profile picture and QR code
+                    doc.rect(10, 95, 30, 30); // Profile picture placeholder
+                    doc.rect(165, 95, 30, 30); // QR code placeholder
+
+                    // Add footer
+                    doc.setFillColor(0);
+                    doc.rect(5, 130, 200, 10, 'F');
+                    doc.setTextColor(255);
+                    doc.setFontSize(8);
+                    doc.text('www.xyzorphans.com.ng', 105, 136, null, null, 'center');
+
+                    // Save the PDF
+                    doc.save('OrphanDistributionCard.pdf');
+                })
+                .catch(error => {
+                    console.error('Error:', error.message);
+                    alert('Failed to fetch collection point details. Please try again or contact support.');
+                });
+
         }
         console.log('jsPDF availability:', typeof window.jspdf !== 'undefined');
     </script>
