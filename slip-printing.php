@@ -291,87 +291,62 @@
             }
 
             collectionPointPromise.then(collectionPointDetails => {
-                const {
-                    jsPDF
-                } = window.jspdf;
+                const { jsPDF } = window.jspdf;
 
-                // Create new document in landscape A5 size
+                // Create a new jsPDF document in landscape A5 size
                 const doc = new jsPDF({
                     orientation: 'landscape',
                     unit: 'mm',
-                    format: 'a5'
+                    format: 'a4'
                 });
 
-                // Set document properties
-                doc.setProperties({
-                    title: 'XYZORPHANS ORGANIZATION AND CENTER Distribution Card',
-                    subject: 'Orphan Distribution Card',
-                    author: 'XYZORPHANS ORGANIZATION AND CENTER',
-                    keywords: 'orphan, distribution, card',
-                    creator: 'XYZORPHANS ORGANIZATION AND CENTER'
-                });
+                // Load background image and then add it to the PDF
+                const img = new Image();
+                img.src = './assets/images/slip/01bg.png'; // Your background image path
+                img.onload = function () {
+                    // Add image to the PDF (ensure it's loaded before rendering)
+                    doc.addImage(img, 'PNG', 0, 0, 148, 210);
 
-                // Add border to the page
-            doc.setDrawColor(0);
-            doc.setLineWidth(0.5);
-            doc.rect(5, 5, 200, 138);
 
-            // Add header
-            doc.setFontSize(16);
-            doc.setFont("helvetica", "bold");
-            doc.text('XYZORPHANS ORGANIZATION AND CENTER', 105, 15, null, null, 'center');
+                    const contentStart = 55;
+                    const lineHeight = 15;
 
-            doc.setFontSize(8);
-            doc.setFont("helvetica", "normal");
-            doc.text('No.11 Kasuwar Shanu GRA, Bauchi Azare Nigeria 0803872992', 105, 22, null, null, 'center');
+                    doc.setFontSize(24);
+                    doc.setFont("helvetica", "bold");
+                    doc.text(`${userDetails.id_number}`, 10, contentStart);
 
-            // Add title
-            doc.setFontSize(14);
-            doc.setFont("helvetica", "bold");
-            doc.text('DISTRIBUTIONS CARD', 105, 30, null, null, 'center');
+                    doc.setFontSize(14);
+                    doc.text(`${userDetails.full_name_b}`, 10, 67);
+                    doc.text(`${userDetails.op_number}`, 10, 80);
+                    doc.text(`${userDetails.address}`, 10, 93);
+                    doc.text(`${userDetails.benefit_type}`, 10, 117);
+                    doc.text(`${collectionPointDetails.name}`, 10, 155);
 
-            // Add content
-            doc.setFontSize(10);
-            doc.setFont("helvetica", "normal");
+                    const collectionDate = new Date();
+                    // Format the date separately
+                    const formattedDate = `${collectionDate.getDate().toString().padStart(2, '0')}-${(collectionDate.getMonth() + 1).toString().padStart(2, '0')}-${collectionDate.getFullYear()}`;
+                    // Format the time separately
+                    const formattedTime = `${collectionDate.getHours().toString().padStart(2, '0')}:${collectionDate.getMinutes().toString().padStart(2, '0')}${collectionDate.getHours() >= 12 ? 'pm' : 'am'}`;
+                    // Add date and time separately to the PDF
+                    doc.text(`${formattedDate}`, 10, 167);
+                    doc.text(`${formattedTime}`, 10, 180);
 
-            const contentStart = 40;
-            const lineHeight = 8;
+                    doc.setFontSize(12);
+                    doc.setTextColor(255);
+                    doc.text('www.xyzorphans.com.ng', 49, 196,);
 
-            doc.text(`Id. Number: ${userDetails.id_number}`, 20, contentStart);
-            doc.text(`Name: ${userDetails.full_name_b}`, 20, contentStart + lineHeight);
-            doc.text(`Address: ${userDetails.address}`, 20, contentStart + 2 * lineHeight);
-            doc.text(`Number of Orphans: ${userDetails.op_number}`, 20, contentStart + 3 * lineHeight);
-            doc.text(`Donation Requested: ${userDetails.benefit_type}`, 20, contentStart + 4 * lineHeight);
-            const collectionDate = new Date();
-            const formattedDate = `${collectionDate.getDate().toString().padStart(2, '0')}-${(collectionDate.getMonth() + 1).toString().padStart(2, '0')}-${collectionDate.getFullYear()} (${collectionDate.getHours().toString().padStart(2, '0')}:${collectionDate.getMinutes().toString().padStart(2, '0')}${collectionDate.getHours() >= 12 ? 'pm' : 'am'})`;
-            doc.text(`Date and Time of Collection: ${formattedDate}`, 20, contentStart + 5 * lineHeight);
-            doc.text(`Collection Point: ${collectionPointDetails.name}`, 20, contentStart + 6 * lineHeight);
-
-            // Add placeholders for profile picture and QR code
-            doc.rect(10, 95, 30, 30); // Profile picture placeholder
-            doc.rect(165, 95, 30, 30); // QR code placeholder
-
-            // Add footer
-            doc.setFillColor(0);
-            doc.rect(5, 130, 200, 10, 'F');
-            doc.setTextColor(255);
-            doc.setFontSize(8);
-            doc.text('www.xyzorphans.com.ng', 105, 136, null, null, 'center');
-
-                // Save the PDF
-                const pdfFileName = `${userDetails.id_number}_OrphanDistributionCard.pdf`;
-                doc.save(pdfFileName);
-                alert('Slip has been downloaded successfully');
-
-                const pdfBlob = doc.output('blob');
-        const pdfURL = URL.createObjectURL(pdfBlob);
-        window.open(pdfURL, '_blank');
-            })
-                .catch(error => {
-                    console.error('Error:', error.message);
-                    alert('Failed to fetch collection point details. Please try again or contact support.');
-                });
-
+                    // Save the PDF
+                    const pdfFileName = `${userDetails.id_number}_OrphanDistributionCard.pdf`;
+                    doc.save(pdfFileName);
+                    alert('Slip has been downloaded successfully');
+                    const pdfBlob = doc.output('blob');
+                    const pdfURL = URL.createObjectURL(pdfBlob);
+                    window.open(pdfURL, '_blank');
+                };
+            }).catch(error => {
+                console.error('Error:', error.message);
+                alert('Failed to fetch collection point details. Please try again or contact support.');
+            });
         }
         console.log('jsPDF availability:', typeof window.jspdf !== 'undefined');
     </script>
