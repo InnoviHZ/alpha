@@ -22,7 +22,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $collection_date = $_POST['collection_date'];
 
   // Insert collection data into database
-  $sql = "INSERT INTO _PDSysSettings (collection_date) VALUES (?)";
+  $sql = "UPDATE _PDSysSettings SET collection_date = ?";
+
 
   if ($stmt = $mysqli->prepare($sql)) {
     $stmt->bind_param("s", $collection_date);
