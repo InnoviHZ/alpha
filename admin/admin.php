@@ -172,6 +172,11 @@ $admin_reg_by = $admin_details['reg_by'];
                 <i class="nav-icon fas fa-calendar"></i>
                 <p>Events</p>
               </a>
+            </li><li class="nav-item">
+              <a href="./sys_settings.php" class="nav-link">
+                <i class="nav-icon fas fa-calendar"></i>
+                <p>System Settings</p>
+              </a>
             </li>
           </ul>
         </nav>
