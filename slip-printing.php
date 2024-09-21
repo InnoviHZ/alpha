@@ -312,55 +312,60 @@
                 });
 
                 // Add border to the page
-                doc.setDrawColor(0);
-                doc.setLineWidth(0.5);
-                doc.rect(5, 5, 200, 138);
+            doc.setDrawColor(0);
+            doc.setLineWidth(0.5);
+            doc.rect(5, 5, 200, 138);
 
-                // Add header
-                doc.setFontSize(16);
-                doc.setFont("helvetica", "bold");
-                doc.text('XYZORPHANS ORGANIZATION AND CENTER', 105, 15, null, null, 'center');
+            // Add header
+            doc.setFontSize(16);
+            doc.setFont("helvetica", "bold");
+            doc.text('XYZORPHANS ORGANIZATION AND CENTER', 105, 15, null, null, 'center');
 
-                doc.setFontSize(8);
-                doc.setFont("helvetica", "normal");
-                doc.text('No.11 Kasuwar Shanu GRA, Bauchi Azare Nigeria 0803872992', 105, 22, null, null, 'center');
+            doc.setFontSize(8);
+            doc.setFont("helvetica", "normal");
+            doc.text('No.11 Kasuwar Shanu GRA, Bauchi Azare Nigeria 0803872992', 105, 22, null, null, 'center');
 
-                // Add title
-                doc.setFontSize(14);
-                doc.setFont("helvetica", "bold");
-                doc.text('DISTRIBUTIONS CARD', 105, 30, null, null, 'center');
+            // Add title
+            doc.setFontSize(14);
+            doc.setFont("helvetica", "bold");
+            doc.text('DISTRIBUTIONS CARD', 105, 30, null, null, 'center');
 
-                // Add content
-                doc.setFontSize(10);
-                doc.setFont("helvetica", "normal");
+            // Add content
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "normal");
 
-                const contentStart = 40;
-                const lineHeight = 8;
+            const contentStart = 40;
+            const lineHeight = 8;
 
-                doc.text(`Id. Number: ${userDetails.id_number}`, 20, contentStart);
-                doc.text(`Name: ${userDetails.full_name_b}`, 20, contentStart + lineHeight);
-                doc.text(`Address: ${userDetails.address}`, 20, contentStart + 2 * lineHeight);
-                doc.text(`Number of Orphans: ${userDetails.op_number}`, 20, contentStart + 3 * lineHeight);
-                doc.text(`Donation Requested: ${userDetails.benefit_type}`, 20, contentStart + 4 * lineHeight);
-                const collectionDate = new Date();
-                const formattedDate = `${collectionDate.getDate().toString().padStart(2, '0')}-${(collectionDate.getMonth() + 1).toString().padStart(2, '0')}-${collectionDate.getFullYear()} (${collectionDate.getHours().toString().padStart(2, '0')}:${collectionDate.getMinutes().toString().padStart(2, '0')}${collectionDate.getHours() >= 12 ? 'pm' : 'am'})`;
-                doc.text(`Date and Time of Collection: ${formattedDate}`, 20, contentStart + 5 * lineHeight);
-                doc.text(`Collection Point: ${collectionPointDetails.name}`, 20, contentStart + 6 * lineHeight);
+            doc.text(`Id. Number: ${userDetails.id_number}`, 20, contentStart);
+            doc.text(`Name: ${userDetails.full_name_b}`, 20, contentStart + lineHeight);
+            doc.text(`Address: ${userDetails.address}`, 20, contentStart + 2 * lineHeight);
+            doc.text(`Number of Orphans: ${userDetails.op_number}`, 20, contentStart + 3 * lineHeight);
+            doc.text(`Donation Requested: ${userDetails.benefit_type}`, 20, contentStart + 4 * lineHeight);
+            const collectionDate = new Date();
+            const formattedDate = `${collectionDate.getDate().toString().padStart(2, '0')}-${(collectionDate.getMonth() + 1).toString().padStart(2, '0')}-${collectionDate.getFullYear()} (${collectionDate.getHours().toString().padStart(2, '0')}:${collectionDate.getMinutes().toString().padStart(2, '0')}${collectionDate.getHours() >= 12 ? 'pm' : 'am'})`;
+            doc.text(`Date and Time of Collection: ${formattedDate}`, 20, contentStart + 5 * lineHeight);
+            doc.text(`Collection Point: ${collectionPointDetails.name}`, 20, contentStart + 6 * lineHeight);
 
-                // Add placeholders for profile picture and QR code
-                doc.rect(10, 95, 30, 30); // Profile picture placeholder
-                doc.rect(165, 95, 30, 30); // QR code placeholder
+            // Add placeholders for profile picture and QR code
+            doc.rect(10, 95, 30, 30); // Profile picture placeholder
+            doc.rect(165, 95, 30, 30); // QR code placeholder
 
-                // Add footer
-                doc.setFillColor(0);
-                doc.rect(5, 130, 200, 10, 'F');
-                doc.setTextColor(255);
-                doc.setFontSize(8);
-                doc.text('www.xyzorphans.com.ng', 105, 136, null, null, 'center');
+            // Add footer
+            doc.setFillColor(0);
+            doc.rect(5, 130, 200, 10, 'F');
+            doc.setTextColor(255);
+            doc.setFontSize(8);
+            doc.text('www.xyzorphans.com.ng', 105, 136, null, null, 'center');
 
                 // Save the PDF
                 const pdfFileName = `${userDetails.id_number}_OrphanDistributionCard.pdf`;
                 doc.save(pdfFileName);
+                alert('Slip has been downloaded successfully');
+
+                const pdfBlob = doc.output('blob');
+        const pdfURL = URL.createObjectURL(pdfBlob);
+        window.open(pdfURL, '_blank');
             })
                 .catch(error => {
                     console.error('Error:', error.message);
