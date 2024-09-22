@@ -310,7 +310,7 @@ function displayCollection_pointTable($id)
                 echo '<td>' . htmlspecialchars($row['lga']) . '</td>';
                 echo '<td>' . htmlspecialchars($row['ward']) . '</td>';
                 echo '<td>';
-                echo '<a href="update_outlet.php?id=' . $row['id'] . '" class="btn btn-warning btn-sm">Update</a> ';
+                echo '<input type="submit" class="btn btn-warning btn-sm mx-2" onclick="update()" value="Update" >';
                 echo '<form method="POST" action="delete_outlet.php" style="display:inline-block;">';
                 echo '<input type="hidden" name="user_id" value="' . $row['id'] . '">';
                 echo '<input type="hidden" name="id" value="' . $id . '">';

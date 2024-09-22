@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <link rel="stylesheet" href="./assets/css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.4.4/qrcode.min.js"></script>
+
     <style>
         @keyframes gradient {
             0% {
@@ -299,7 +301,7 @@
                     unit: 'mm',
                     format: 'a4'
                 });
-
+                
                 // Load background image and then add it to the PDF
                 const img = new Image();
                 img.src = './assets/images/slip/01bg.png'; // Your background image path
@@ -311,6 +313,7 @@
                     const contentStart = 55;
                     const lineHeight = 15;
 
+                    
                     doc.setFontSize(24);
                     doc.setFont("helvetica", "bold");
                     doc.text(`${userDetails.id_number}`, 10, contentStart);
