@@ -71,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
 }
 
-?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -233,6 +233,64 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!-- /.card-body -->
               </div>
               <!-- /.card -->
+
+              <!-- User update form -->
+              <div class="card card-primary" style="display: none;" id="updateCollectionPointForm">
+                <div class="card-header">
+                  <h3 class="card-title">update Collection Point</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <form method="post">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="name">Name:</label>
+                          <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="state">State</label>
+                          <select class="form-control" id="state" name="state">
+                            <option value="">Select State</option>
+                            <!-- States will be populated dynamically -->
+                          </select>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="lga">Local Government Area (LGA)</label>
+                          <select class="form-control" id="lga" name="lga">
+                            <option value="">Select LGA</option>
+                            <!-- LGAs will be populated dynamically -->
+                          </select>
+                        </div>
+
+                        <div class="form-group">
+                          <label>Wards</label>
+                          <div id="wardsCheckboxes">
+                            <!-- Wards checkboxes will be populated dynamically -->
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="address">Address:</label>
+                          <textarea class="form-control" id="address" name="address"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="capacity">Capacity:</label>
+                          <input type="number" class="form-control" id="capacity" name="capacity" required>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <button type="submit" class="btn btn-primary">Register Collection Point</button>
+                      <button type="button" class="btn btn-secondary" onclick="goBack()">Cancel</button>
+                    </div>
+                  </form>
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
             </div>
             <!-- /.col -->
           </div>
@@ -267,9 +325,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       document.getElementById('newCollectionPointForm').style.display = 'block';
     }
 
+    function update() {
+      document.getElementById('CollectionPointForm').style.display = 'none';
+      document.getElementById('updateCollectionPointForm').style.display = 'block';
+    }
+
     function goBack() {
       document.getElementById('CollectionPointForm').style.display = 'block';
       document.getElementById('newCollectionPointForm').style.display = 'none';
+      document.getElementById('updateCollectionPointForm').style.display = 'none';
+
     }
 
     function fetchWards() {
@@ -281,11 +346,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           data: {
             lga: lga
           },
-          success: function(response) {
+          success: function (response) {
             var wards = JSON.parse(response);
             var wardSelect = $('#ward');
             wardSelect.empty();
-            wards.forEach(function(ward) {
+            wards.forEach(function (ward) {
               wardSelect.append('<option value="' + ward + '">' + ward + '</option>');
             });
           }
@@ -297,11 +362,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   </script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
       var locationsData;
 
       // Load the JSON data
-      $.getJSON('locations.json', function(data) {
+      $.getJSON('locations.json', function (data) {
         locationsData = data.states;
 
         // Populate the states dropdown
@@ -311,7 +376,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       });
 
       // Handle State change
-      $('#state').change(function() {
+      $('#state').change(function () {
         var state = $(this).val();
         $('#lga').html('<option value="">Select LGA</option>');
         $('#wardsCheckboxes').empty();
@@ -325,7 +390,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       });
 
       // Handle LGA change
-      $('#lga').change(function() {
+      $('#lga').change(function () {
         var state = $('#state').val();
         var lga = $(this).val();
         $('#wardsCheckboxes').empty();

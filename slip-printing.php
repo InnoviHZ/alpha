@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OrphaCare - Slip</title>
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700;900&family=Public+Sans:wght@400;500;700;900&display=swap">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700;900&family=Public+Sans:wght@400;500;700;900&display=swap">
     <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
@@ -16,6 +17,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <link rel="stylesheet" href="./assets/css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.4.4/qrcode.min.js"></script>
+
     <style>
         @keyframes gradient {
             0% {
@@ -110,7 +113,8 @@
                         <form>
                             <div class="mb-4">
                                 <label for="key" class="form-label">Orphan ID or Guardian's Phone Number</label>
-                                <input type="text" id="key" class="form-control form-control-lg" placeholder="Enter ID or Phone Number">
+                                <input type="text" id="key" class="form-control form-control-lg"
+                                    placeholder="Enter ID or Phone Number">
                             </div>
                             <p class="text-muted mb-4">Please allow popups for this site from your browser</p>
                             <div class="d-grid gap-2">
@@ -131,16 +135,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const keyInput = document.getElementById('key');
             const downloadBtn = document.getElementById('downloadBtn');
 
-            keyInput.addEventListener('input', function() {
+            keyInput.addEventListener('input', function () {
                 const isInputFilled = this.value.trim() !== '';
                 downloadBtn.disabled = !isInputFilled;
             });
 
-            downloadBtn.addEventListener('click', function(e) {
+            downloadBtn.addEventListener('click', function (e) {
                 e.preventDefault(); // Prevent form submission
                 const key = keyInput.value;
                 fetchUserDetails(key, downloadSlip);
@@ -154,7 +158,7 @@
                 data: {
                     key: key
                 },
-                success: function(response) {
+                success: function (response) {
                     console.log('Raw response:', response); // Debug log
 
                     // Check if the response is already an object
@@ -183,7 +187,7 @@
                         }
                     }
                 },
-                error: function(jqXHR, textStatus, errorThrown) {
+                error: function (jqXHR, textStatus, errorThrown) {
                     console.error('AJAX error:', textStatus, errorThrown);
                     console.error('Full error object:', jqXHR);
                     alert('Error fetching user details. Please check the console for more information.');
@@ -216,7 +220,7 @@
                         id: collectionPointId
                     },
                     dataType: 'text', // Change this to 'text' instead of 'json'
-                    success: function(response) {
+                    success: function (response) {
                         try {
                             const parsedResponse = JSON.parse(response);
                             if (parsedResponse && typeof parsedResponse === 'object' && Object.keys(parsedResponse).length > 0) {
@@ -229,7 +233,7 @@
                             reject(new Error(`Failed to parse server response: ${error.message}`));
                         }
                     },
-                    error: function(jqXHR, textStatus, errorThrown) {
+                    error: function (jqXHR, textStatus, errorThrown) {
                         console.error('AJAX error details:', {
                             status: jqXHR.status,
                             statusText: jqXHR.statusText,
@@ -250,14 +254,14 @@
                         ward: ward
                     },
                     dataType: 'json',
-                    success: function(response) {
+                    success: function (response) {
                         if (response && typeof response === 'object' && !response.error) {
                             resolve(response);
                         } else {
                             reject(new Error(response.error || 'No collection point found for the given ward'));
                         }
                     },
-                    error: function(jqXHR, textStatus, errorThrown) {
+                    error: function (jqXHR, textStatus, errorThrown) {
                         console.error('AJAX error details:', {
                             status: jqXHR.status,
                             statusText: jqXHR.statusText,
@@ -289,81 +293,63 @@
             }
 
             collectionPointPromise.then(collectionPointDetails => {
-                    const {
-                        jsPDF
-                    } = window.jspdf;
+                const { jsPDF } = window.jspdf;
 
-                    // Create new document in landscape A5 size
-                    const doc = new jsPDF({
-                        orientation: 'landscape',
-                        unit: 'mm',
-                        format: 'a5'
-                    });
+                // Create a new jsPDF document in landscape A5 size
+                const doc = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+                
+                // Load background image and then add it to the PDF
+                const img = new Image();
+                img.src = './assets/images/slip/01bg.png'; // Your background image path
+                img.onload = function () {
+                    // Add image to the PDF (ensure it's loaded before rendering)
+                    doc.addImage(img, 'PNG', 0, 0, 148, 210);
 
-                    // Set document properties
-                    doc.setProperties({
-                        title: 'XYZORPHANS ORGANIZATION AND CENTER Distribution Card',
-                        subject: 'Orphan Distribution Card',
-                        author: 'XYZORPHANS ORGANIZATION AND CENTER',
-                        keywords: 'orphan, distribution, card',
-                        creator: 'XYZORPHANS ORGANIZATION AND CENTER'
-                    });
 
-                    // Add border to the page
-                    doc.setDrawColor(0);
-                    doc.setLineWidth(0.5);
-                    doc.rect(5, 5, 200, 138);
+                    const contentStart = 55;
+                    const lineHeight = 15;
 
-                    // Add header
-                    doc.setFontSize(16);
+                    
+                    doc.setFontSize(24);
                     doc.setFont("helvetica", "bold");
-                    doc.text('XYZORPHANS ORGANIZATION AND CENTER', 105, 15, null, null, 'center');
+                    doc.text(`${userDetails.id_number}`, 10, contentStart);
 
-                    doc.setFontSize(8);
-                    doc.setFont("helvetica", "normal");
-                    doc.text('No.11 Kasuwar Shanu GRA, Bauchi Azare Nigeria 0803872992', 105, 22, null, null, 'center');
-
-                    // Add title
                     doc.setFontSize(14);
-                    doc.setFont("helvetica", "bold");
-                    doc.text('DISTRIBUTIONS CARD', 105, 30, null, null, 'center');
+                    doc.text(`${userDetails.full_name_b}`, 10, 67);
+                    doc.text(`${userDetails.op_number}`, 10, 80);
+                    doc.text(`${userDetails.address}`, 10, 93);
+                    doc.text(`${userDetails.benefit_type}`, 10, 117);
+                    doc.text(`${collectionPointDetails.name}`, 10, 155);
 
-                    // Add content
-                    doc.setFontSize(10);
-                    doc.setFont("helvetica", "normal");
-
-                    const contentStart = 40;
-                    const lineHeight = 8;
-
-                    doc.text(`Id. Number: ${userDetails.id_number}`, 20, contentStart);
-                    doc.text(`Name: ${userDetails.full_name_b}`, 20, contentStart + lineHeight);
-                    doc.text(`Address: ${userDetails.address}`, 20, contentStart + 2 * lineHeight);
-                    doc.text(`Number of Orphans: ${userDetails.op_number}`, 20, contentStart + 3 * lineHeight);
-                    doc.text(`Donation Requested: ${userDetails.benefit_type }`, 20, contentStart + 4 * lineHeight);
                     const collectionDate = new Date();
-                    const formattedDate = `${collectionDate.getDate().toString().padStart(2, '0')}-${(collectionDate.getMonth() + 1).toString().padStart(2, '0')}-${collectionDate.getFullYear()} (${collectionDate.getHours().toString().padStart(2, '0')}:${collectionDate.getMinutes().toString().padStart(2, '0')}${collectionDate.getHours() >= 12 ? 'pm' : 'am'})`;
-                    doc.text(`Date and Time of Collection: ${formattedDate}`, 20, contentStart + 5 * lineHeight);
-                    doc.text(`Collection Point: ${collectionPointDetails.name}`, 20, contentStart + 6 * lineHeight);
+                    // Format the date separately
+                    const formattedDate = `${collectionDate.getDate().toString().padStart(2, '0')}-${(collectionDate.getMonth() + 1).toString().padStart(2, '0')}-${collectionDate.getFullYear()}`;
+                    // Format the time separately
+                    const formattedTime = `${collectionDate.getHours().toString().padStart(2, '0')}:${collectionDate.getMinutes().toString().padStart(2, '0')}${collectionDate.getHours() >= 12 ? 'pm' : 'am'}`;
+                    // Add date and time separately to the PDF
+                    doc.text(`${formattedDate}`, 10, 167);
+                    doc.text(`${formattedTime}`, 10, 180);
 
-                    // Add placeholders for profile picture and QR code
-                    doc.rect(10, 95, 30, 30); // Profile picture placeholder
-                    doc.rect(165, 95, 30, 30); // QR code placeholder
-
-                    // Add footer
-                    doc.setFillColor(0);
-                    doc.rect(5, 130, 200, 10, 'F');
+                    doc.setFontSize(12);
                     doc.setTextColor(255);
-                    doc.setFontSize(8);
-                    doc.text('www.xyzorphans.com.ng', 105, 136, null, null, 'center');
+                    doc.text('www.xyzorphans.com.ng', 49, 196,);
 
                     // Save the PDF
-                    doc.save('OrphanDistributionCard.pdf');
-                })
-                .catch(error => {
-                    console.error('Error:', error.message);
-                    alert('Failed to fetch collection point details. Please try again or contact support.');
-                });
-
+                    const pdfFileName = `${userDetails.id_number}_OrphanDistributionCard.pdf`;
+                    doc.save(pdfFileName);
+                    alert('Slip has been downloaded successfully');
+                    const pdfBlob = doc.output('blob');
+                    const pdfURL = URL.createObjectURL(pdfBlob);
+                    window.open(pdfURL, '_blank');
+                };
+            }).catch(error => {
+                console.error('Error:', error.message);
+                alert('Failed to fetch collection point details. Please try again or contact support.');
+            });
         }
         console.log('jsPDF availability:', typeof window.jspdf !== 'undefined');
     </script>
