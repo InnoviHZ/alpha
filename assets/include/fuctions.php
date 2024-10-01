@@ -310,11 +310,11 @@ function displayCollection_pointTable($id)
                 echo '<td>' . htmlspecialchars($row['lga']) . '</td>';
                 echo '<td>' . htmlspecialchars($row['ward']) . '</td>';
                 echo '<td>';
-                echo '<input type="submit" class="btn btn-warning btn-sm mx-2" onclick="update()" value="Update" >';
-                echo '<form method="POST" action="delete_outlet.php" style="display:inline-block;">';
+                echo '<a href="collection_point.php?id='. $row['id'].'"><input type="submit" class="btn btn-warning btn-sm mx-2" value="Update" ></a>';
+                echo '<form method="POST" action="delete_collection_points.php" style="display:inline-block;">';
                 echo '<input type="hidden" name="user_id" value="' . $row['id'] . '">';
                 echo '<input type="hidden" name="id" value="' . $id . '">';
-                echo '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this user?\')">Delete</button>';
+                echo '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this Collection Point?\')">Delete</button>';
                 echo '</form>';
                 echo '</td>';
                 echo '</tr>';

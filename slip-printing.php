@@ -331,8 +331,8 @@
                     // Format the time separately
                     const formattedTime = `${collectionDate.getHours().toString().padStart(2, '0')}:${collectionDate.getMinutes().toString().padStart(2, '0')}${collectionDate.getHours() >= 12 ? 'pm' : 'am'}`;
                     // Add date and time separately to the PDF
-                    doc.text(`${formattedDate}`, 10, 167);
-                    doc.text(`${formattedTime}`, 10, 180);
+                    doc.text(`${collectionPointDetails.date}`, 10, 167);
+                    doc.text(`${collectionPointDetails.time}`, 10, 180);
 
                     doc.setFontSize(12);
                     doc.setTextColor(255);
